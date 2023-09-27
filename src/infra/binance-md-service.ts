@@ -13,9 +13,6 @@ type MessageFrame = {
 };
 
 export class BinanceMdService extends MdService {
-  private subscriptions = new Set<string>();
-  private sequenceNumber = 0;
-
   constructor(
     readonly eventEmitter: EventEmitter,
     private ws: WsAdapter
@@ -23,10 +20,7 @@ export class BinanceMdService extends MdService {
     super(eventEmitter);
 
     this.ws.onOpen(() => {
-      console.log('Connection Open: Sending subscriptions...');
-      this.subscriptions.forEach(symbol => {
-        this.subscribe(symbol);
-      });
+      this.processOpen();
     });
 
     this.ws.onMessage(data => {
@@ -52,10 +46,13 @@ export class BinanceMdService extends MdService {
       id: this.nextSequenceNumber()
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptions.add(symbol);
+    this.subscriptions.subscribe(symbol);
   }
 
   unsubscribe(symbol: string): void {
+    if (!this.subscriptions.hasSubscriptions(symbol)) {
+      return;
+    }
     const stream = `${symbol.toLowerCase()}@bookTicker`;
     const messageFrame = {
       method: 'UNSUBSCRIBE',
@@ -63,12 +60,7 @@ export class BinanceMdService extends MdService {
       id: this.nextSequenceNumber()
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptions.delete(symbol);
-  }
-
-  private nextSequenceNumber(): number {
-    this.sequenceNumber++;
-    return this.sequenceNumber;
+    this.subscriptions.unsubscribe(symbol);
   }
 
   private processMessage(data: string) {

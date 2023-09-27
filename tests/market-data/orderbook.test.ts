@@ -2,7 +2,6 @@ import {
   Orderbook,
   OrderBookLevel
 } from '../../src/domain/market-data/orderbook';
-import Instrument from '../../src/domain/market-data/instrument';
 
 describe('Orderbook', () => {
   it('should create an instance of Orderbook', () => {

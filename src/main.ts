@@ -20,4 +20,4 @@ async function main() {
   mdBinance.subscribe('btcbrl');
 }
 
-main();
+void main();

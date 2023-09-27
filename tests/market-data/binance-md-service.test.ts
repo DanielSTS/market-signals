@@ -47,16 +47,31 @@ describe('BinanceMdService', () => {
   it('should unsubscribe from a symbol', () => {
     const symbol = 'ethusdt';
     const unsubscribeSpy = jest.spyOn(wsAdapter, 'send');
-
+    binanceMdService.subscribe(symbol);
     binanceMdService.unsubscribe(symbol);
 
-    expect(unsubscribeSpy).toHaveBeenCalledWith(
+    expect(unsubscribeSpy).toHaveBeenNthCalledWith(
+      2,
       JSON.stringify({
         method: 'UNSUBSCRIBE',
         params: [`${symbol.toLowerCase()}@bookTicker`],
-        id: 1
+        id: 2
       })
     );
+  });
+
+  it('should send subscribe when processOpen', () => {
+    const subscribeSpy = jest.spyOn(wsAdapter, 'send');
+
+    binanceMdService.subscribe('btcbrl');
+    binanceMdService.subscribe('ethbrl');
+    binanceMdService.subscribe('xrpbrl');
+
+    expect(subscribeSpy).toHaveBeenCalledTimes(3);
+
+    binanceMdService['processOpen']();
+
+    expect(subscribeSpy).toHaveBeenCalledTimes(6);
   });
 
   it('should process depth update event', () => {
@@ -95,8 +110,9 @@ describe('BinanceMdService', () => {
   });
 
   it('should increase sequence number when unsubscribing', () => {
-    const initialSequenceNumber = binanceMdService['sequenceNumber'];
     const symbol = 'bnbusdt';
+    binanceMdService.subscribe(symbol);
+    const initialSequenceNumber = binanceMdService['sequenceNumber'];
 
     binanceMdService.unsubscribe(symbol);
 

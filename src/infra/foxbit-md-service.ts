@@ -16,8 +16,6 @@ type Level1UpdateEvent = {
   BestOffer: number;
 };
 export class FoxbitMdService extends MdService {
-  private subscriptions = new Set<string>();
-  private sequenceNumber = 0;
   constructor(
     readonly eventEmitter: EventEmitter,
     private ws: WsAdapter
@@ -25,10 +23,7 @@ export class FoxbitMdService extends MdService {
     super(eventEmitter);
 
     this.ws.onOpen(() => {
-      console.log('Connection Open: Sending subscriptions...');
-      this.subscriptions.forEach(symbol => {
-        this.subscribe(symbol);
-      });
+      this.processOpen();
     });
 
     this.ws.onMessage(data => {
@@ -57,10 +52,13 @@ export class FoxbitMdService extends MdService {
       o: payload
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptions.add(symbol);
+    this.subscriptions.subscribe(symbol);
   }
 
   unsubscribe(symbol: string): void {
+    if (!this.subscriptions.hasSubscriptions(symbol)) {
+      return;
+    }
     const payload = JSON.stringify({
       MarketId: symbol
     });
@@ -71,12 +69,7 @@ export class FoxbitMdService extends MdService {
       o: payload
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptions.delete(symbol);
-  }
-
-  private nextSequenceNumber() {
-    this.sequenceNumber++;
-    return this.sequenceNumber;
+    this.subscriptions.unsubscribe(symbol);
   }
 
   private processMessage(data: string): void {

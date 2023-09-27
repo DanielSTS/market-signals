@@ -50,19 +50,35 @@ describe('FoxbitMdService', () => {
   it('should unsubscribe from a symbol', () => {
     const symbol = 'ethbrl';
     const unsubscribeSpy = jest.spyOn(wsAdapter, 'send');
+    foxbitMdService.subscribe(symbol);
 
     foxbitMdService.unsubscribe(symbol);
 
-    expect(unsubscribeSpy).toHaveBeenCalledWith(
+    expect(unsubscribeSpy).toHaveBeenNthCalledWith(
+      2,
       JSON.stringify({
         m: 2,
-        i: 1,
+        i: 2,
         n: 'UnSubscribeLevel1',
         o: JSON.stringify({
           MarketId: symbol
         })
       })
     );
+  });
+
+  it('should send subscribe when processOpen', () => {
+    const subscribeSpy = jest.spyOn(wsAdapter, 'send');
+
+    foxbitMdService.subscribe('btcbrl');
+    foxbitMdService.subscribe('ethbrl');
+    foxbitMdService.subscribe('xrpbrl');
+
+    expect(subscribeSpy).toHaveBeenCalledTimes(3);
+
+    foxbitMdService['processOpen']();
+
+    expect(subscribeSpy).toHaveBeenCalledTimes(6);
   });
 
   it('should process level 1 update event', () => {
@@ -103,8 +119,9 @@ describe('FoxbitMdService', () => {
   });
 
   it('should increase sequence number when unsubscribing', () => {
-    const initialSequenceNumber = foxbitMdService['sequenceNumber'];
     const symbol = 'ethbrl';
+    foxbitMdService.subscribe(symbol);
+    const initialSequenceNumber = foxbitMdService['sequenceNumber'];
 
     foxbitMdService.unsubscribe(symbol);
 
