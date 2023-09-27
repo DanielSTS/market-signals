@@ -1,10 +1,8 @@
-import { MdService } from '../../src/domain/market-data/md.service';
-import { FoxbitProvider } from '../../src/infra/foxbit-provider';
+import { FoxbitMdService } from '../../src/infra/foxbit-md-service';
 import EventEmitter from 'events';
 
 test('', () => {
-  const provider = new FoxbitProvider();
-  const eventEmmiter = new EventEmitter();
-  const mdService = new MdService(provider, eventEmmiter);
+  const eventEmiter = new EventEmitter();
+  const mdService = new FoxbitMdService(eventEmiter);
   //mdService.subscribe('btcbrl');
 });

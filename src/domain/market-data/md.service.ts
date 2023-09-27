@@ -1,24 +1,16 @@
-import { Provider } from './provider';
 import EventEmitter from 'events';
 import { Orderbook } from './orderbook';
 
-export class MdService {
-  constructor(
-    readonly provider: Provider,
-    readonly eventEmitter: EventEmitter
-  ) {
-    this.provider.onOrderBook((orderBook: Orderbook) => {
-      this.eventEmitter.emit(
-        `onOrderBook.${orderBook.exchange}.${orderBook.symbol}`,
-        orderBook
-      );
-    });
-  }
+export abstract class MdService {
+  protected constructor(readonly eventEmitter: EventEmitter) {}
 
-  subscribe(symbol: string): void {
-    this.provider.subscribe(symbol);
+  protected emitOrderBook(orderBook: Orderbook) {
+    this.eventEmitter.emit(
+      `onOrderBook.${orderBook.exchange}.${orderBook.symbol}`,
+      orderBook
+    );
   }
-  unsubscribe(symbol: string): void {
-    this.provider.unsubscribe(symbol);
-  }
+  abstract subscribe(symbol: string): void;
+
+  abstract unsubscribe(symbol: string): void;
 }

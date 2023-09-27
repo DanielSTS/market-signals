@@ -1,7 +1,7 @@
-import { Provider } from '../domain/market-data/provider';
 import { Orderbook, OrderBookLevel } from '../domain/market-data/orderbook';
 import { ResilientWsAdapter } from './ws-adapter';
-import Instrument from '../domain/market-data/instrument';
+import { MdService } from '../domain/market-data/md.service';
+import EventEmitter from 'events';
 
 type MessageFrame = {
   m: number;
@@ -9,12 +9,19 @@ type MessageFrame = {
   n: string;
   o: string;
 };
-export class FoxbitProvider implements Provider {
+
+type Level1UpdateEvent = {
+  MarketId: string;
+  BestBid: number;
+  BestOffer: number;
+};
+export class FoxbitMdService extends MdService {
   private ws: ResilientWsAdapter;
   private subscriptions = new Set<string>();
-  private onOrderBookCallback?: (orderBook: Orderbook) => void;
   private sequenceNumber = 0;
-  constructor() {
+  constructor(readonly eventEmitter: EventEmitter) {
+    super(eventEmitter);
+
     this.ws = new ResilientWsAdapter('wss://api.foxbit.com.br/');
 
     this.ws.onOpen(() => {
@@ -29,8 +36,8 @@ export class FoxbitProvider implements Provider {
       const messageFrame: MessageFrame = JSON.parse(data);
       const payload = JSON.parse(messageFrame.o);
       switch (messageFrame.n) {
-        case 'Level2UpdateEvent': {
-          this.processLevel2UpdateEvent(payload);
+        case 'Level1UpdateEvent': {
+          this.processLevel1UpdateEvent(payload as Level1UpdateEvent);
           break;
         }
         default: {
@@ -49,19 +56,15 @@ export class FoxbitProvider implements Provider {
 
     this.ws.open();
   }
-  onOrderBook(callback: (orderBook: Orderbook) => void): void {
-    this.onOrderBookCallback = callback;
-  }
 
   subscribe(symbol: string): void {
     const payload = JSON.stringify({
-      MarketId: symbol,
-      Depth: 1
+      MarketId: symbol
     });
     const messageFrame = {
       m: 2,
       i: this.nextSequenceNumber(),
-      n: 'SubscribeLevel2',
+      n: 'SubscribeLevel1',
       o: payload
     };
     this.ws.send(JSON.stringify(messageFrame));
@@ -75,7 +78,7 @@ export class FoxbitProvider implements Provider {
     const messageFrame = {
       m: 2,
       i: this.nextSequenceNumber(),
-      n: 'UnSubscribeLevel2',
+      n: 'UnSubscribeLevel1',
       o: payload
     };
     this.ws.send(JSON.stringify(messageFrame));
@@ -87,20 +90,12 @@ export class FoxbitProvider implements Provider {
     return this.sequenceNumber;
   }
 
-  private processLevel2UpdateEvent(payload: unknown): void {
-    console.log(payload);
-    const instrument = new Instrument('btcbrl', 'foxbit', 1, 0.001);
-    const bids: OrderBookLevel[] = [
-      [100, 10],
-      [99, 5]
-    ];
+  private processLevel1UpdateEvent(payload: Level1UpdateEvent): void {
+    const bids: OrderBookLevel[] = [[payload.BestBid, Number.MAX_SAFE_INTEGER]];
     const asks: OrderBookLevel[] = [
-      [101, 8],
-      [102, 3]
+      [payload.BestOffer, Number.MAX_SAFE_INTEGER]
     ];
-    const orderBook = new Orderbook(instrument, bids, asks);
-    if (this.onOrderBookCallback) {
-      this.onOrderBookCallback(orderBook);
-    }
+    const orderBook = new Orderbook(payload.MarketId, 'foxbit', bids, asks);
+    this.emitOrderBook(orderBook);
   }
 }

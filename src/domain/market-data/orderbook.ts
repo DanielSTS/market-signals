@@ -1,10 +1,9 @@
-import Instrument from './instrument';
-
 export type OrderBookLevel = [price: number, quantity: number];
 
 export class Orderbook {
   constructor(
-    readonly instrument: Instrument,
+    readonly symbol: string,
+    readonly exchange: string,
     readonly bids: OrderBookLevel[],
     readonly asks: OrderBookLevel[]
   ) {
@@ -14,11 +13,5 @@ export class Orderbook {
     if (bids[0][0] > asks[0][0]) {
       throw new Error('Invalid order book');
     }
-  }
-  get exchange(): string {
-    return this.instrument.exchange;
-  }
-  get symbol(): string {
-    return this.instrument.symbol;
   }
 }
