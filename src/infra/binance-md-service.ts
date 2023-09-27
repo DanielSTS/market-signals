@@ -4,20 +4,18 @@ import { MdService } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
 
 type MessageFrame = {
-  m: number;
-  i: number;
-  n: string;
-  o: string;
+  u: number; // Order book updateId
+  s: string; // Symbol
+  b: string; // Best bid price
+  B: string; // Best bid quantity
+  a: string; // Best ask price
+  A: string; // Best ask quantity
 };
 
-type Level1UpdateEvent = {
-  MarketId: string;
-  BestBid: number;
-  BestOffer: number;
-};
-export class FoxbitMdService extends MdService {
+export class BinanceMdService extends MdService {
   private subscriptions = new Set<string>();
   private sequenceNumber = 0;
+
   constructor(
     readonly eventEmitter: EventEmitter,
     private ws: ResilientWsAdapter
@@ -34,16 +32,8 @@ export class FoxbitMdService extends MdService {
     this.ws.onMessage(data => {
       console.log('Message received', data);
       const messageFrame: MessageFrame = JSON.parse(data);
-      switch (messageFrame.n) {
-        case 'Level1UpdateEvent': {
-          this.processLevel1UpdateEvent(
-            JSON.parse(messageFrame.o) as Level1UpdateEvent
-          );
-          break;
-        }
-        default: {
-          break;
-        }
+      if (messageFrame.s) {
+        this.processDepthUpdateEvent(messageFrame);
       }
     });
 
@@ -59,44 +49,42 @@ export class FoxbitMdService extends MdService {
   }
 
   subscribe(symbol: string): void {
-    const payload = JSON.stringify({
-      MarketId: symbol
-    });
+    const stream = `${symbol.toLowerCase()}@bookTicker`;
     const messageFrame = {
-      m: 2,
-      i: this.nextSequenceNumber(),
-      n: 'SubscribeLevel1',
-      o: payload
+      method: 'SUBSCRIBE',
+      params: [stream],
+      id: this.nextSequenceNumber()
     };
     this.ws.send(JSON.stringify(messageFrame));
     this.subscriptions.add(symbol);
   }
 
   unsubscribe(symbol: string): void {
-    const payload = JSON.stringify({
-      MarketId: symbol
-    });
+    const stream = `${symbol.toLowerCase()}@bookTicker`;
     const messageFrame = {
-      m: 2,
-      i: this.nextSequenceNumber(),
-      n: 'UnSubscribeLevel1',
-      o: payload
+      method: 'UNSUBSCRIBE',
+      params: [stream],
+      id: this.nextSequenceNumber()
     };
     this.ws.send(JSON.stringify(messageFrame));
     this.subscriptions.delete(symbol);
   }
 
-  private nextSequenceNumber() {
+  private nextSequenceNumber(): number {
     this.sequenceNumber++;
     return this.sequenceNumber;
   }
 
-  private processLevel1UpdateEvent(payload: Level1UpdateEvent): void {
-    const bids: OrderBookLevel[] = [[payload.BestBid, Number.MAX_SAFE_INTEGER]];
-    const asks: OrderBookLevel[] = [
-      [payload.BestOffer, Number.MAX_SAFE_INTEGER]
+  private processDepthUpdateEvent(payload: MessageFrame): void {
+    const symbol = payload.s.toLowerCase();
+    const bids: OrderBookLevel[] = [
+      [parseFloat(payload.b), parseFloat(payload.B)]
     ];
-    const orderBook = new Orderbook(payload.MarketId, 'foxbit', bids, asks);
+    const asks: OrderBookLevel[] = [
+      [parseFloat(payload.a), parseFloat(payload.A)]
+    ];
+
+    const orderBook = new Orderbook(symbol, 'binance', bids, asks);
     this.emitOrderBook(orderBook);
   }
 }
