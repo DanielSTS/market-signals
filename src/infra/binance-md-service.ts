@@ -1,7 +1,7 @@
 import { Orderbook, OrderBookLevel } from '../domain/market-data/orderbook';
-import { ResilientWsAdapter } from './ws-adapter';
 import { MdService } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
+import { WsAdapter } from './websocket';
 
 type MessageFrame = {
   u: number; // Order book updateId
@@ -18,7 +18,7 @@ export class BinanceMdService extends MdService {
 
   constructor(
     readonly eventEmitter: EventEmitter,
-    private ws: ResilientWsAdapter
+    private ws: WsAdapter
   ) {
     super(eventEmitter);
 
@@ -30,11 +30,7 @@ export class BinanceMdService extends MdService {
     });
 
     this.ws.onMessage(data => {
-      console.log('Message received', data);
-      const messageFrame: MessageFrame = JSON.parse(data);
-      if (messageFrame.s) {
-        this.processDepthUpdateEvent(messageFrame);
-      }
+      this.processMessage(data);
     });
 
     this.ws.onError(error => {
@@ -73,6 +69,14 @@ export class BinanceMdService extends MdService {
   private nextSequenceNumber(): number {
     this.sequenceNumber++;
     return this.sequenceNumber;
+  }
+
+  private processMessage(data: string) {
+    console.log('Message received', data);
+    const messageFrame: MessageFrame = JSON.parse(data);
+    if (messageFrame.s) {
+      this.processDepthUpdateEvent(messageFrame);
+    }
   }
 
   private processDepthUpdateEvent(payload: MessageFrame): void {

@@ -1,5 +1,5 @@
 export interface WsAdapter {
-  open(url: string): void;
+  open(): void;
   close(): void;
   send(data: string): void;
   onMessage(callback: (data: string) => void): void;

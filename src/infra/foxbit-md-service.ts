@@ -1,7 +1,7 @@
 import { Orderbook, OrderBookLevel } from '../domain/market-data/orderbook';
-import { ResilientWsAdapter } from './ws-adapter';
 import { MdService } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
+import { WsAdapter } from './websocket';
 
 type MessageFrame = {
   m: number;
@@ -20,7 +20,7 @@ export class FoxbitMdService extends MdService {
   private sequenceNumber = 0;
   constructor(
     readonly eventEmitter: EventEmitter,
-    private ws: ResilientWsAdapter
+    private ws: WsAdapter
   ) {
     super(eventEmitter);
 
@@ -32,19 +32,7 @@ export class FoxbitMdService extends MdService {
     });
 
     this.ws.onMessage(data => {
-      console.log('Message received', data);
-      const messageFrame: MessageFrame = JSON.parse(data);
-      switch (messageFrame.n) {
-        case 'Level1UpdateEvent': {
-          this.processLevel1UpdateEvent(
-            JSON.parse(messageFrame.o) as Level1UpdateEvent
-          );
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+      this.processMessage(data);
     });
 
     this.ws.onError(error => {
@@ -89,6 +77,22 @@ export class FoxbitMdService extends MdService {
   private nextSequenceNumber() {
     this.sequenceNumber++;
     return this.sequenceNumber;
+  }
+
+  private processMessage(data: string): void {
+    console.log('Message received', data);
+    const messageFrame: MessageFrame = JSON.parse(data);
+    switch (messageFrame.n) {
+      case 'Level1UpdateEvent': {
+        this.processLevel1UpdateEvent(
+          JSON.parse(messageFrame.o) as Level1UpdateEvent
+        );
+        break;
+      }
+      default: {
+        break;
+      }
+    }
   }
 
   private processLevel1UpdateEvent(payload: Level1UpdateEvent): void {
