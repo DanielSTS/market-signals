@@ -3,23 +3,30 @@ import { WebsocketAdapter } from './websocket-adapter';
 
 export class WsAdapter implements WebsocketAdapter {
   private ws?: WebSocket;
-  private readonly url: string;
-  private readonly reconnectDelay: number;
+  private pingInterval?: NodeJS.Timeout;
   private onMessageCallback?: (data: string) => void;
   private onErrorCallback?: (error: Error) => void;
   private onOpenCallback?: () => void;
   private onCloseCallback?: (code: number, reason: string) => void;
 
-  constructor(url: string, reconnectDelay: number = 10 * 1000) {
-    this.url = url;
-    this.reconnectDelay = reconnectDelay;
-  }
+  constructor(
+    private readonly url: string,
+    private readonly reconnectDelay = 10 * 1000,
+    private readonly pingTime = 30 * 1000
+  ) {}
 
   open(): void {
     this.connect();
+    this.pingInterval = setInterval(() => {
+      this.sendPing();
+    }, this.pingTime);
   }
 
   close(): void {
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+    }
+
     if (this.ws) {
       this.ws.close();
     }
@@ -75,5 +82,11 @@ export class WsAdapter implements WebsocketAdapter {
       }
       setTimeout(this.connect, this.reconnectDelay);
     });
+  }
+
+  private sendPing(): void {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.ping();
+    }
   }
 }

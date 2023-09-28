@@ -17,6 +17,15 @@ type Level1UpdateEvent = {
   BestBid: number;
   BestOffer: number;
 };
+
+type TickerDataUpdateEvent = [
+  timestamp: string,
+  open: string,
+  high: string,
+  low: string,
+  close: string,
+  volume: string
+];
 export class FoxbitMdService extends MdService {
   constructor(
     eventEmitter: EventEmitter,
@@ -48,7 +57,7 @@ export class FoxbitMdService extends MdService {
     const payload = JSON.stringify({
       MarketId: symbol
     });
-    const messageFrame = {
+    const messageFrame: MessageFrame = {
       m: 2,
       i: this.nextSequenceNumber(),
       n: 'SubscribeLevel1',
@@ -65,7 +74,7 @@ export class FoxbitMdService extends MdService {
     const payload = JSON.stringify({
       MarketId: symbol
     });
-    const messageFrame = {
+    const messageFrame: MessageFrame = {
       m: 2,
       i: this.nextSequenceNumber(),
       n: 'UnSubscribeLevel1',
@@ -77,7 +86,6 @@ export class FoxbitMdService extends MdService {
 
   private processMessage(data: string): void {
     const messageFrame: MessageFrame = JSON.parse(data);
-    console.log(messageFrame);
     switch (messageFrame.n) {
       case 'Level1UpdateEvent': {
         this.processLevel1UpdateEvent(
@@ -104,8 +112,8 @@ export class FoxbitMdService extends MdService {
     this.emitOrderBook(orderBook);
   }
 
-  private processTickerDataUpdateEvent(payload: []): void {
-    const candlesticks = payload.map((candleData: []) => {
+  private processTickerDataUpdateEvent(payload: TickerDataUpdateEvent[]): void {
+    const candlesticks = payload.map((candleData: TickerDataUpdateEvent) => {
       const [timestamp, open, high, low, close, volume] = candleData.map(
         (value: string) => parseFloat(value)
       );
@@ -165,7 +173,7 @@ export class FoxbitMdService extends MdService {
       Interval: 60,
       IncludeLastCount: 100
     });
-    const messageFrame = {
+    const messageFrame: MessageFrame = {
       m: 2,
       i: this.nextSequenceNumber(),
       n: 'SubscribeTicker',

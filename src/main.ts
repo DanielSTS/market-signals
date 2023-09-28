@@ -15,7 +15,11 @@ async function main() {
     console.log(data);
   });
 
-  const wsFoxbit = new WsAdapter('wss://api.foxbit.com.br/');
+  eventEmitter.on('onCandlestick.binance.btcbrl', data => {
+    console.log(data);
+  });
+
+  /*  const wsFoxbit = new WsAdapter('wss://api.foxbit.com.br/');
   const restFoxbit = new AxiosAdapter('https://api.foxbit.com.br/rest/v3/');
   const mdFoxbit = new FoxbitMdService(eventEmitter, wsFoxbit, restFoxbit);
 
@@ -24,7 +28,7 @@ async function main() {
     '1h',
     new Date('2022-07-18T00:00'),
     new Date('2022-08-19T12:00')
-  );
+  );*/
 
   /*  console.log(
     await mdFoxbit.getCandlestick(
@@ -35,10 +39,18 @@ async function main() {
     )
   );*/
 
-  /*  const wsBinance = new WsAdapter('wss://stream.binance.com:9443/ws');
+  const wsBinance = new WsAdapter('wss://stream.binance.com:9443/ws');
   const restBinance = new AxiosAdapter('https://api.binance.com/api/v3/');
   const mdBinance = new BinanceMdService(eventEmitter, wsBinance, restBinance);
-  console.log(
+
+  mdBinance.subscribeCandlestick(
+    'btcbrl',
+    '1h',
+    new Date('2022-07-18T00:00'),
+    new Date('2022-08-19T12:00')
+  );
+
+  /*  console.log(
     await mdBinance.getCandlestick(
       'btcbrl',
       '1h',
