@@ -1,7 +1,7 @@
 import { WebSocket } from 'ws';
-import { WsAdapter } from './websocket';
+import { WebsocketAdapter } from './websocket-adapter';
 
-export class ResilientWsAdapter implements WsAdapter {
+export class WsAdapter implements WebsocketAdapter {
   private ws?: WebSocket;
   private readonly url: string;
   private readonly reconnectDelay: number;

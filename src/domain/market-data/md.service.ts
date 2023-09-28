@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import { Orderbook } from './orderbook';
 import { SubscriptionManager } from './subscription-manager';
+import { Candlestick } from './candlestick';
 
 export abstract class MdService {
   protected subscriptionManager = new SubscriptionManager();
@@ -29,4 +30,11 @@ export abstract class MdService {
   abstract subscribe(symbol: string): void;
 
   abstract unsubscribe(symbol: string): void;
+
+  abstract getCandles(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): Promise<Candlestick[]>;
 }

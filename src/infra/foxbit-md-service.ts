@@ -1,7 +1,9 @@
 import { Orderbook, OrderBookLevel } from '../domain/market-data/orderbook';
 import { MdService } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
-import { WsAdapter } from './websocket';
+import { WebsocketAdapter } from './websocket-adapter';
+import { RestAdapter } from './rest-adapter';
+import { Candlestick } from '../domain/market-data/candlestick';
 
 type MessageFrame = {
   m: number;
@@ -18,7 +20,8 @@ type Level1UpdateEvent = {
 export class FoxbitMdService extends MdService {
   constructor(
     eventEmitter: EventEmitter,
-    private ws: WsAdapter
+    private ws: WebsocketAdapter,
+    private rest: RestAdapter
   ) {
     super(eventEmitter);
 
@@ -94,5 +97,25 @@ export class FoxbitMdService extends MdService {
     ];
     const orderBook = new Orderbook(payload.MarketId, 'foxbit', bids, asks);
     this.emitOrderBook(orderBook);
+  }
+
+  async getCandles(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): Promise<Candlestick[]> {
+    const data = await this.rest.get<[]>(`markets/${symbol}/candles`, {
+      interval: interval,
+      start_time: startTime.toISOString(),
+      end_time: endTime.toISOString()
+    });
+    return data.map((candleData: []) => {
+      const [timestamp, open, high, low, close, volume] = candleData.map(
+        (value: string) => parseFloat(value)
+      );
+      const timestampDate = new Date(timestamp);
+      return new Candlestick(timestampDate, open, high, low, close, volume);
+    });
   }
 }

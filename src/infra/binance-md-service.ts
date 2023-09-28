@@ -1,7 +1,9 @@
 import { Orderbook, OrderBookLevel } from '../domain/market-data/orderbook';
 import { MdService } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
-import { WsAdapter } from './websocket';
+import { WebsocketAdapter } from './websocket-adapter';
+import { Candlestick } from '../domain/market-data/candlestick';
+import { RestAdapter } from './rest-adapter';
 
 type MessageFrame = {
   u: number; // Order book updateId
@@ -15,7 +17,8 @@ type MessageFrame = {
 export class BinanceMdService extends MdService {
   constructor(
     eventEmitter: EventEmitter,
-    private ws: WsAdapter
+    private ws: WebsocketAdapter,
+    private rest: RestAdapter
   ) {
     super(eventEmitter);
 
@@ -81,5 +84,28 @@ export class BinanceMdService extends MdService {
 
     const orderBook = new Orderbook(symbol, 'binance', bids, asks);
     this.emitOrderBook(orderBook);
+  }
+
+  async getCandles(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): Promise<Candlestick[]> {
+    const startTimeMillis = startTime.getTime();
+    const endTimeMillis = endTime.getTime();
+    const response = await this.rest.get<[]>(`klines`, {
+      symbol: symbol.toUpperCase(),
+      interval: interval,
+      startTime: startTimeMillis,
+      endTime: endTimeMillis
+    });
+    return response.map((candleData: []) => {
+      const [timestamp, open, high, low, close, volume] = candleData.map(
+        (value: string) => parseFloat(value)
+      );
+      const timestampDate = new Date(timestamp);
+      return new Candlestick(timestampDate, open, high, low, close, volume);
+    });
   }
 }

@@ -1,8 +1,9 @@
 import EventEmitter from 'events';
 import { BinanceMdService } from '../../src/infra/binance-md-service';
-import { WsAdapter } from '../../src/infra/websocket';
+import { WebsocketAdapter } from '../../src/infra/websocket-adapter';
+import { RestAdapter } from '../../src/infra/rest-adapter';
 
-function makeWsAdapter(): WsAdapter {
+function makeWsAdapter(): WebsocketAdapter {
   return {
     open: jest.fn(),
     close: jest.fn(),
@@ -14,15 +15,28 @@ function makeWsAdapter(): WsAdapter {
   };
 }
 
+function makeRestAdapter(): RestAdapter {
+  return {
+    get: jest.fn(),
+    post: jest.fn()
+  };
+}
+
 describe('BinanceMdService', () => {
   let eventEmitter: EventEmitter;
-  let wsAdapter: WsAdapter;
+  let wsAdapter: WebsocketAdapter;
+  let restAdapter: RestAdapter;
   let binanceMdService: BinanceMdService;
 
   beforeEach(() => {
     eventEmitter = new EventEmitter();
     wsAdapter = makeWsAdapter();
-    binanceMdService = new BinanceMdService(eventEmitter, wsAdapter);
+    restAdapter = makeRestAdapter();
+    binanceMdService = new BinanceMdService(
+      eventEmitter,
+      wsAdapter,
+      restAdapter
+    );
   });
 
   afterEach(() => {
@@ -118,5 +132,70 @@ describe('BinanceMdService', () => {
 
     const finalSequenceNumber = binanceMdService['sequenceNumber'];
     expect(finalSequenceNumber).toBeGreaterThan(initialSequenceNumber);
+  });
+
+  it('should fetch candles data', async () => {
+    const symbol = 'btcusdt';
+    const interval = '1h';
+    const startTime = new Date('2022-07-18T00:00');
+    const endTime = new Date('2022-08-19T12:00');
+
+    const expectedCandles = [
+      ['1658275200000', '333.0303', '444.0404', '111.0101', '222.0202', '10'],
+      [
+        '1658275200000',
+        '334.4334',
+        '445.5445',
+        '112.2112',
+        '323.3223',
+        '20.45'
+      ],
+      ['1658275200000', '777.3333', '999.1111', '666.4444', '888.2222', '30']
+    ];
+
+    jest
+      .spyOn(restAdapter, 'get')
+      .mockReturnValueOnce(Promise.resolve(expectedCandles));
+
+    const candles = await binanceMdService.getCandles(
+      symbol,
+      interval,
+      startTime,
+      endTime
+    );
+
+    expect(candles).toEqual([
+      {
+        timestamp: new Date(1658275200000),
+        open: 333.0303,
+        high: 444.0404,
+        low: 111.0101,
+        close: 222.0202,
+        volume: 10
+      },
+      {
+        timestamp: new Date(1658275200000),
+        open: 334.4334,
+        high: 445.5445,
+        low: 112.2112,
+        close: 323.3223,
+        volume: 20.45
+      },
+      {
+        timestamp: new Date(1658275200000),
+        open: 777.3333,
+        high: 999.1111,
+        low: 666.4444,
+        close: 888.2222,
+        volume: 30
+      }
+    ]);
+
+    expect(restAdapter.get).toHaveBeenCalledWith('klines', {
+      symbol: symbol.toUpperCase(),
+      interval: interval,
+      startTime: startTime.getTime(),
+      endTime: endTime.getTime()
+    });
   });
 });
