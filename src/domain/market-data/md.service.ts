@@ -17,7 +17,7 @@ export abstract class MdService {
     this.subscriptionManagerCandlestick
       .getUniqueSubscriptions()
       .forEach(symbol => {
-        this.subscribeCandlestick(symbol, '', new Date(), new Date());
+        this.subscribeCandlestick(symbol, '1h');
       });
   }
 
@@ -44,19 +44,9 @@ export abstract class MdService {
 
   abstract unsubscribeOrderBook(symbol: string): void;
 
-  abstract subscribeCandlestick(
-    symbol: string,
-    interval: string,
-    startTime: Date,
-    endTime: Date
-  ): void;
+  abstract subscribeCandlestick(symbol: string, interval: string): void;
 
-  abstract unsubscribeCandlestick(
-    symbol: string,
-    interval: string,
-    startTime: Date,
-    endTime: Date
-  ): void;
+  abstract unsubscribeCandlestick(symbol: string, interval: string): void;
 
   abstract getCandlestick(
     symbol: string,

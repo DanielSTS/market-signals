@@ -4,6 +4,8 @@ import { WsAdapter } from './infra/ws-adapter';
 import { BinanceMdService } from './infra/binance-md-service';
 import { Arbitrage, ArbitrageParams } from './domain/strategy/arbitrage';
 import { AxiosAdapter } from './infra/axios-adapter';
+import { CandlestickManager } from './domain/market-data/candle-manager';
+import { CrossAverage } from './domain/strategy/cross-average';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -11,13 +13,13 @@ async function main() {
     console.log(data);
   });
 
-  eventEmitter.on('onCandlestick.foxbit.btcbrl', data => {
+  /*  eventEmitter.on('onCandlestick.foxbit.btcbrl', data => {
     console.log(data);
   });
 
   eventEmitter.on('onCandlestick.binance.btcbrl', data => {
     console.log(data);
-  });
+  });*/
 
   /*  const wsFoxbit = new WsAdapter('wss://api.foxbit.com.br/');
   const restFoxbit = new AxiosAdapter('https://api.foxbit.com.br/rest/v3/');
@@ -42,15 +44,12 @@ async function main() {
   const wsBinance = new WsAdapter('wss://stream.binance.com:9443/ws');
   const restBinance = new AxiosAdapter('https://api.binance.com/api/v3/');
   const mdBinance = new BinanceMdService(eventEmitter, wsBinance, restBinance);
+  const candlestickManager = new CandlestickManager(eventEmitter, mdBinance);
+  const crossAverage = new CrossAverage(candlestickManager);
 
-  mdBinance.subscribeCandlestick(
-    'btcbrl',
-    '1h',
-    new Date('2022-07-18T00:00'),
-    new Date('2022-08-19T12:00')
-  );
-
-  /*  console.log(
+  /*
+   mdBinance.subscribeCandlestick('btcbrl', '1h');
+   console.log(
     await mdBinance.getCandlestick(
       'btcbrl',
       '1h',

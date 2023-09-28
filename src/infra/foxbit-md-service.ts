@@ -162,12 +162,7 @@ export class FoxbitMdService extends MdService {
     });
   }
 
-  subscribeCandlestick(
-    symbol: string,
-    interval: string,
-    startTime: Date,
-    endTime: Date
-  ): void {
+  subscribeCandlestick(symbol: string, interval: string): void {
     const payload = JSON.stringify({
       MarketId: symbol,
       Interval: 60,
@@ -183,10 +178,5 @@ export class FoxbitMdService extends MdService {
     this.subscriptionManagerCandlestick.subscribe(symbol);
   }
 
-  unsubscribeCandlestick(
-    symbol: string,
-    interval: string,
-    startTime: Date,
-    endTime: Date
-  ): void {}
+  unsubscribeCandlestick(symbol: string, interval: string): void {}
 }

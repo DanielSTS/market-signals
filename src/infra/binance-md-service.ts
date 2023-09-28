@@ -168,12 +168,7 @@ export class BinanceMdService extends MdService {
     });
   }
 
-  subscribeCandlestick(
-    symbol: string,
-    interval: string,
-    startTime: Date,
-    endTime: Date
-  ): void {
+  subscribeCandlestick(symbol: string, interval: string): void {
     const stream = `${symbol.toLowerCase()}@kline_1h`;
     const messageFrame = {
       method: 'SUBSCRIBE',
@@ -184,10 +179,5 @@ export class BinanceMdService extends MdService {
     this.subscriptionManagerCandlestick.subscribe(symbol);
   }
 
-  unsubscribeCandlestick(
-    symbol: string,
-    interval: string,
-    startTime: Date,
-    endTime: Date
-  ): void {}
+  unsubscribeCandlestick(symbol: string, interval: string): void {}
 }
