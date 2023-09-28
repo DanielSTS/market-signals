@@ -5,14 +5,20 @@ import { Candlestick } from './candlestick';
 
 export abstract class MdService {
   protected subscriptionManager = new SubscriptionManager();
+  protected subscriptionManagerCandlestick = new SubscriptionManager();
   private sequenceNumber = 0;
   protected constructor(private readonly eventEmitter: EventEmitter) {}
 
   protected processOpen(): void {
     console.log('Connection Open: Sending subscriptions...');
     this.subscriptionManager.getUniqueSubscriptions().forEach(symbol => {
-      this.subscribe(symbol);
+      this.subscribeOrderBook(symbol);
     });
+    this.subscriptionManagerCandlestick
+      .getUniqueSubscriptions()
+      .forEach(symbol => {
+        this.subscribeCandlestick(symbol, '', new Date(), new Date());
+      });
   }
 
   protected emitOrderBook(orderBook: Orderbook) {
@@ -22,16 +28,37 @@ export abstract class MdService {
     );
   }
 
+  protected emitCandlestick(candlestick: Candlestick) {
+    this.eventEmitter.emit(
+      `onCandlestick.${candlestick.exchange}.${candlestick.symbol}`,
+      candlestick
+    );
+  }
+
   protected nextSequenceNumber(): number {
     this.sequenceNumber++;
     return this.sequenceNumber;
   }
 
-  abstract subscribe(symbol: string): void;
+  abstract subscribeOrderBook(symbol: string): void;
 
-  abstract unsubscribe(symbol: string): void;
+  abstract unsubscribeOrderBook(symbol: string): void;
 
-  abstract getCandles(
+  abstract subscribeCandlestick(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): void;
+
+  abstract unsubscribeCandlestick(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): void;
+
+  abstract getCandlestick(
     symbol: string,
     interval: string,
     startTime: Date,

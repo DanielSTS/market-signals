@@ -41,7 +41,7 @@ export class BinanceMdService extends MdService {
     this.ws.open();
   }
 
-  subscribe(symbol: string): void {
+  subscribeOrderBook(symbol: string): void {
     const stream = `${symbol.toLowerCase()}@bookTicker`;
     const messageFrame = {
       method: 'SUBSCRIBE',
@@ -52,7 +52,7 @@ export class BinanceMdService extends MdService {
     this.subscriptionManager.subscribe(symbol);
   }
 
-  unsubscribe(symbol: string): void {
+  unsubscribeOrderBook(symbol: string): void {
     if (!this.subscriptionManager.hasSubscriptions(symbol)) {
       return;
     }
@@ -86,7 +86,7 @@ export class BinanceMdService extends MdService {
     this.emitOrderBook(orderBook);
   }
 
-  async getCandles(
+  async getCandlestick(
     symbol: string,
     interval: string,
     startTime: Date,
@@ -105,7 +105,30 @@ export class BinanceMdService extends MdService {
         (value: string) => parseFloat(value)
       );
       const timestampDate = new Date(timestamp);
-      return new Candlestick(timestampDate, open, high, low, close, volume);
+      return new Candlestick(
+        timestampDate,
+        open,
+        high,
+        low,
+        close,
+        volume,
+        'binance',
+        symbol
+      );
     });
   }
+
+  subscribeCandlestick(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): void {}
+
+  unsubscribeCandlestick(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): void {}
 }

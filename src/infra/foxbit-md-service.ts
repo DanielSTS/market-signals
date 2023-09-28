@@ -44,7 +44,7 @@ export class FoxbitMdService extends MdService {
     this.ws.open();
   }
 
-  subscribe(symbol: string): void {
+  subscribeOrderBook(symbol: string): void {
     const payload = JSON.stringify({
       MarketId: symbol
     });
@@ -58,7 +58,7 @@ export class FoxbitMdService extends MdService {
     this.subscriptionManager.subscribe(symbol);
   }
 
-  unsubscribe(symbol: string): void {
+  unsubscribeOrderBook(symbol: string): void {
     if (!this.subscriptionManager.hasSubscriptions(symbol)) {
       return;
     }
@@ -77,11 +77,16 @@ export class FoxbitMdService extends MdService {
 
   private processMessage(data: string): void {
     const messageFrame: MessageFrame = JSON.parse(data);
+    console.log(messageFrame);
     switch (messageFrame.n) {
       case 'Level1UpdateEvent': {
         this.processLevel1UpdateEvent(
           JSON.parse(messageFrame.o) as Level1UpdateEvent
         );
+        break;
+      }
+      case 'TickerDataUpdateEvent': {
+        this.processTickerDataUpdateEvent(JSON.parse(messageFrame.o));
         break;
       }
       default: {
@@ -99,7 +104,28 @@ export class FoxbitMdService extends MdService {
     this.emitOrderBook(orderBook);
   }
 
-  async getCandles(
+  private processTickerDataUpdateEvent(payload: []): void {
+    const candlesticks = payload.map((candleData: []) => {
+      const [timestamp, open, high, low, close, volume] = candleData.map(
+        (value: string) => parseFloat(value)
+      );
+      const timestampDate = new Date(timestamp);
+      return new Candlestick(
+        timestampDate,
+        open,
+        high,
+        low,
+        close,
+        volume,
+        'foxbit',
+        'btcbrl'
+      );
+    });
+
+    this.emitCandlestick(candlesticks[candlesticks.length - 1]);
+  }
+
+  async getCandlestick(
     symbol: string,
     interval: string,
     startTime: Date,
@@ -115,7 +141,44 @@ export class FoxbitMdService extends MdService {
         (value: string) => parseFloat(value)
       );
       const timestampDate = new Date(timestamp);
-      return new Candlestick(timestampDate, open, high, low, close, volume);
+      return new Candlestick(
+        timestampDate,
+        open,
+        high,
+        low,
+        close,
+        volume,
+        'foxbit',
+        symbol
+      );
     });
   }
+
+  subscribeCandlestick(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): void {
+    const payload = JSON.stringify({
+      MarketId: symbol,
+      Interval: 60,
+      IncludeLastCount: 100
+    });
+    const messageFrame = {
+      m: 2,
+      i: this.nextSequenceNumber(),
+      n: 'SubscribeTicker',
+      o: payload
+    };
+    this.ws.send(JSON.stringify(messageFrame));
+    this.subscriptionManagerCandlestick.subscribe(symbol);
+  }
+
+  unsubscribeCandlestick(
+    symbol: string,
+    interval: string,
+    startTime: Date,
+    endTime: Date
+  ): void {}
 }

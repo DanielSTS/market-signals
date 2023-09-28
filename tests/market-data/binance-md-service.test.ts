@@ -47,7 +47,7 @@ describe('BinanceMdService', () => {
     const symbol = 'btcusdt';
     const subscribeSpy = jest.spyOn(wsAdapter, 'send');
 
-    binanceMdService.subscribe(symbol);
+    binanceMdService.subscribeOrderBook(symbol);
 
     expect(subscribeSpy).toHaveBeenCalledWith(
       JSON.stringify({
@@ -61,8 +61,8 @@ describe('BinanceMdService', () => {
   it('should unsubscribe from a symbol', () => {
     const symbol = 'ethusdt';
     const unsubscribeSpy = jest.spyOn(wsAdapter, 'send');
-    binanceMdService.subscribe(symbol);
-    binanceMdService.unsubscribe(symbol);
+    binanceMdService.subscribeOrderBook(symbol);
+    binanceMdService.unsubscribeOrderBook(symbol);
 
     expect(unsubscribeSpy).toHaveBeenNthCalledWith(
       2,
@@ -77,9 +77,9 @@ describe('BinanceMdService', () => {
   it('should send subscribe when processOpen', () => {
     const subscribeSpy = jest.spyOn(wsAdapter, 'send');
 
-    binanceMdService.subscribe('btcbrl');
-    binanceMdService.subscribe('ethbrl');
-    binanceMdService.subscribe('xrpbrl');
+    binanceMdService.subscribeOrderBook('btcbrl');
+    binanceMdService.subscribeOrderBook('ethbrl');
+    binanceMdService.subscribeOrderBook('xrpbrl');
 
     expect(subscribeSpy).toHaveBeenCalledTimes(3);
 
@@ -117,7 +117,7 @@ describe('BinanceMdService', () => {
     const initialSequenceNumber = binanceMdService['sequenceNumber'];
     const symbol = 'ltcusdt';
 
-    binanceMdService.subscribe(symbol);
+    binanceMdService.subscribeOrderBook(symbol);
 
     const finalSequenceNumber = binanceMdService['sequenceNumber'];
     expect(finalSequenceNumber).toBeGreaterThan(initialSequenceNumber);
@@ -125,10 +125,10 @@ describe('BinanceMdService', () => {
 
   it('should increase sequence number when unsubscribing', () => {
     const symbol = 'bnbusdt';
-    binanceMdService.subscribe(symbol);
+    binanceMdService.subscribeOrderBook(symbol);
     const initialSequenceNumber = binanceMdService['sequenceNumber'];
 
-    binanceMdService.unsubscribe(symbol);
+    binanceMdService.unsubscribeOrderBook(symbol);
 
     const finalSequenceNumber = binanceMdService['sequenceNumber'];
     expect(finalSequenceNumber).toBeGreaterThan(initialSequenceNumber);
@@ -157,7 +157,7 @@ describe('BinanceMdService', () => {
       .spyOn(restAdapter, 'get')
       .mockReturnValueOnce(Promise.resolve(expectedCandles));
 
-    const candles = await binanceMdService.getCandles(
+    const candles = await binanceMdService.getCandlestick(
       symbol,
       interval,
       startTime,
@@ -171,7 +171,9 @@ describe('BinanceMdService', () => {
         high: 444.0404,
         low: 111.0101,
         close: 222.0202,
-        volume: 10
+        volume: 10,
+        exchange: 'binance',
+        symbol
       },
       {
         timestamp: new Date(1658275200000),
@@ -179,7 +181,9 @@ describe('BinanceMdService', () => {
         high: 445.5445,
         low: 112.2112,
         close: 323.3223,
-        volume: 20.45
+        volume: 20.45,
+        exchange: 'binance',
+        symbol
       },
       {
         timestamp: new Date(1658275200000),
@@ -187,7 +191,9 @@ describe('BinanceMdService', () => {
         high: 999.1111,
         low: 666.4444,
         close: 888.2222,
-        volume: 30
+        volume: 30,
+        exchange: 'binance',
+        symbol
       }
     ]);
 

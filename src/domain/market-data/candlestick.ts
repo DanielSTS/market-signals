@@ -1,10 +1,12 @@
 export class Candlestick {
   constructor(
-    public timestamp: Date,
-    public open: number,
-    public high: number,
-    public low: number,
-    public close: number,
-    public volume: number
+    readonly timestamp: Date,
+    readonly open: number,
+    readonly high: number,
+    readonly low: number,
+    readonly close: number,
+    readonly volume: number,
+    readonly exchange: string,
+    readonly symbol: string
   ) {}
 }

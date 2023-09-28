@@ -43,7 +43,7 @@ describe('FoxbitMdService', () => {
     const symbol = 'btcbrl';
     const subscribeSpy = jest.spyOn(wsAdapter, 'send');
 
-    foxbitMdService.subscribe(symbol);
+    foxbitMdService.subscribeOrderBook(symbol);
 
     expect(subscribeSpy).toHaveBeenCalledWith(
       JSON.stringify({
@@ -60,9 +60,9 @@ describe('FoxbitMdService', () => {
   it('should unsubscribe from a symbol', () => {
     const symbol = 'ethbrl';
     const unsubscribeSpy = jest.spyOn(wsAdapter, 'send');
-    foxbitMdService.subscribe(symbol);
+    foxbitMdService.subscribeOrderBook(symbol);
 
-    foxbitMdService.unsubscribe(symbol);
+    foxbitMdService.unsubscribeOrderBook(symbol);
 
     expect(unsubscribeSpy).toHaveBeenNthCalledWith(
       2,
@@ -80,9 +80,9 @@ describe('FoxbitMdService', () => {
   it('should send subscribe when processOpen', () => {
     const subscribeSpy = jest.spyOn(wsAdapter, 'send');
 
-    foxbitMdService.subscribe('btcbrl');
-    foxbitMdService.subscribe('ethbrl');
-    foxbitMdService.subscribe('xrpbrl');
+    foxbitMdService.subscribeOrderBook('btcbrl');
+    foxbitMdService.subscribeOrderBook('ethbrl');
+    foxbitMdService.subscribeOrderBook('xrpbrl');
 
     expect(subscribeSpy).toHaveBeenCalledTimes(3);
 
@@ -122,7 +122,7 @@ describe('FoxbitMdService', () => {
     const initialSequenceNumber = foxbitMdService['sequenceNumber'];
     const symbol = 'ltcbrl';
 
-    foxbitMdService.subscribe(symbol);
+    foxbitMdService.subscribeOrderBook(symbol);
 
     const finalSequenceNumber = foxbitMdService['sequenceNumber'];
     expect(finalSequenceNumber).toBeGreaterThan(initialSequenceNumber);
@@ -130,10 +130,10 @@ describe('FoxbitMdService', () => {
 
   it('should increase sequence number when unsubscribing', () => {
     const symbol = 'ethbrl';
-    foxbitMdService.subscribe(symbol);
+    foxbitMdService.subscribeOrderBook(symbol);
     const initialSequenceNumber = foxbitMdService['sequenceNumber'];
 
-    foxbitMdService.unsubscribe(symbol);
+    foxbitMdService.unsubscribeOrderBook(symbol);
 
     const finalSequenceNumber = foxbitMdService['sequenceNumber'];
     expect(finalSequenceNumber).toBeGreaterThan(initialSequenceNumber);
@@ -162,7 +162,7 @@ describe('FoxbitMdService', () => {
       .spyOn(restAdapter, 'get')
       .mockReturnValueOnce(Promise.resolve(expectedCandles));
 
-    const candles = await foxbitMdService.getCandles(
+    const candles = await foxbitMdService.getCandlestick(
       symbol,
       interval,
       startTime,
@@ -176,7 +176,9 @@ describe('FoxbitMdService', () => {
         high: 444.0404,
         low: 111.0101,
         close: 222.0202,
-        volume: 10
+        volume: 10,
+        exchange: 'foxbit',
+        symbol
       },
       {
         timestamp: new Date(1658275200000),
@@ -184,7 +186,9 @@ describe('FoxbitMdService', () => {
         high: 445.5445,
         low: 112.2112,
         close: 323.3223,
-        volume: 20.45
+        volume: 20.45,
+        exchange: 'foxbit',
+        symbol
       },
       {
         timestamp: new Date(1658275200000),
@@ -192,7 +196,9 @@ describe('FoxbitMdService', () => {
         high: 999.1111,
         low: 666.4444,
         close: 888.2222,
-        volume: 30
+        volume: 30,
+        exchange: 'foxbit',
+        symbol
       }
     ]);
 
