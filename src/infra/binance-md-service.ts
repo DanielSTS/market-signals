@@ -14,7 +14,7 @@ type MessageFrame = {
 
 export class BinanceMdService extends MdService {
   constructor(
-    readonly eventEmitter: EventEmitter,
+    eventEmitter: EventEmitter,
     private ws: WsAdapter
   ) {
     super(eventEmitter);
@@ -46,11 +46,11 @@ export class BinanceMdService extends MdService {
       id: this.nextSequenceNumber()
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptions.subscribe(symbol);
+    this.subscriptionManager.subscribe(symbol);
   }
 
   unsubscribe(symbol: string): void {
-    if (!this.subscriptions.hasSubscriptions(symbol)) {
+    if (!this.subscriptionManager.hasSubscriptions(symbol)) {
       return;
     }
     const stream = `${symbol.toLowerCase()}@bookTicker`;
@@ -60,11 +60,10 @@ export class BinanceMdService extends MdService {
       id: this.nextSequenceNumber()
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptions.unsubscribe(symbol);
+    this.subscriptionManager.unsubscribe(symbol);
   }
 
   private processMessage(data: string) {
-    console.log('Message received', data);
     const messageFrame: MessageFrame = JSON.parse(data);
     if (messageFrame.s) {
       this.processDepthUpdateEvent(messageFrame);

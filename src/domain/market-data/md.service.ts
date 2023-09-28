@@ -3,13 +3,13 @@ import { Orderbook } from './orderbook';
 import { SubscriptionManager } from './subscription-manager';
 
 export abstract class MdService {
-  protected subscriptions = new SubscriptionManager();
+  protected subscriptionManager = new SubscriptionManager();
   private sequenceNumber = 0;
-  protected constructor(readonly eventEmitter: EventEmitter) {}
+  protected constructor(private readonly eventEmitter: EventEmitter) {}
 
   protected processOpen(): void {
     console.log('Connection Open: Sending subscriptions...');
-    this.subscriptions.getUniqueSubscriptions().forEach(symbol => {
+    this.subscriptionManager.getUniqueSubscriptions().forEach(symbol => {
       this.subscribe(symbol);
     });
   }

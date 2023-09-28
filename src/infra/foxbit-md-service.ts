@@ -17,7 +17,7 @@ type Level1UpdateEvent = {
 };
 export class FoxbitMdService extends MdService {
   constructor(
-    readonly eventEmitter: EventEmitter,
+    eventEmitter: EventEmitter,
     private ws: WsAdapter
   ) {
     super(eventEmitter);
@@ -52,11 +52,11 @@ export class FoxbitMdService extends MdService {
       o: payload
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptions.subscribe(symbol);
+    this.subscriptionManager.subscribe(symbol);
   }
 
   unsubscribe(symbol: string): void {
-    if (!this.subscriptions.hasSubscriptions(symbol)) {
+    if (!this.subscriptionManager.hasSubscriptions(symbol)) {
       return;
     }
     const payload = JSON.stringify({
@@ -69,11 +69,10 @@ export class FoxbitMdService extends MdService {
       o: payload
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptions.unsubscribe(symbol);
+    this.subscriptionManager.unsubscribe(symbol);
   }
 
   private processMessage(data: string): void {
-    console.log('Message received', data);
     const messageFrame: MessageFrame = JSON.parse(data);
     switch (messageFrame.n) {
       case 'Level1UpdateEvent': {

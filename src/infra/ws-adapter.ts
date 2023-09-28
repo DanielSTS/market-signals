@@ -27,7 +27,6 @@ export class ResilientWsAdapter implements WsAdapter {
 
   send(data: string): void {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      console.log(data);
       this.ws.send(data);
     }
   }
