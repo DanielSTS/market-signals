@@ -1,4 +1,4 @@
-import { Orderbook, OrderBookLevel } from '../domain/market-data/orderbook';
+import { OrderBook, OrderBookLevel } from '../domain/market-data/order-book';
 import { MdService } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
 import { WebsocketAdapter } from './websocket-adapter';
@@ -109,7 +109,7 @@ export class BinanceMdService extends MdService {
       [parseFloat(payload.a), parseFloat(payload.A)]
     ];
 
-    const orderBook = new Orderbook(symbol, 'binance', bids, asks);
+    const orderBook = new OrderBook(symbol, 'binance', bids, asks);
     this.emitOrderBook(orderBook);
   }
 

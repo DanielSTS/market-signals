@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { Orderbook } from './orderbook';
+import { OrderBook } from './order-book';
 import { SubscriptionManager } from './subscription-manager';
 import { Candlestick } from './candlestick';
 
@@ -21,7 +21,7 @@ export abstract class MdService {
       });
   }
 
-  protected emitOrderBook(orderBook: Orderbook) {
+  protected emitOrderBook(orderBook: OrderBook) {
     this.eventEmitter.emit(
       `onOrderBook.${orderBook.exchange}.${orderBook.symbol}`,
       orderBook

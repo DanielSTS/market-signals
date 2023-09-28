@@ -6,6 +6,7 @@ import { Arbitrage, ArbitrageParams } from './domain/strategy/arbitrage';
 import { AxiosAdapter } from './infra/axios-adapter';
 import { CandlestickManager } from './domain/market-data/candle-manager';
 import { CrossAverage } from './domain/strategy/cross-average';
+import { Backtester } from './domain/strategy/backtest';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -44,9 +45,18 @@ async function main() {
   const wsBinance = new WsAdapter('wss://stream.binance.com:9443/ws');
   const restBinance = new AxiosAdapter('https://api.binance.com/api/v3/');
   const mdBinance = new BinanceMdService(eventEmitter, wsBinance, restBinance);
-  const candlestickManager = new CandlestickManager(eventEmitter, mdBinance);
-  const crossAverage = new CrossAverage(candlestickManager);
 
+  const bt = new Backtester(
+    mdBinance,
+    new Date('2022-07-18T00:00'),
+    new Date('2022-08-19T12:00'),
+    '1h',
+    'btcbrl',
+    'cross',
+    {}
+  );
+
+  bt.startBacktester();
   /*
    mdBinance.subscribeCandlestick('btcbrl', '1h');
    console.log(

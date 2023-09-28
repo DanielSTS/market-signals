@@ -1,5 +1,6 @@
-import EventEmitter from 'events';
-import { Orderbook } from '../market-data/orderbook';
+import { Candlestick } from '../market-data/candlestick';
+import { OrderBook } from '../market-data/order-book';
+import { Strategy, StrategyCallbacks } from './strategy';
 
 export type ArbitrageParams = {
   symbolA: string;
@@ -9,27 +10,26 @@ export type ArbitrageParams = {
   spread: number;
 };
 
-export class Arbitrage {
-  private orderBookA?: Orderbook;
-  private orderBookB?: Orderbook;
+export class Arbitrage extends Strategy {
+  private orderBookA?: OrderBook;
+  private orderBookB?: OrderBook;
+
   constructor(
-    private readonly eventEmitter: EventEmitter,
-    private readonly params: ArbitrageParams
+    private readonly params: ArbitrageParams,
+    callbacks: StrategyCallbacks
   ) {
-    this.eventEmitter.on(
-      `onOrderBook.${params.exchangeA}.${params.symbolA}`,
-      (orderBook: Orderbook) => {
-        this.orderBookA = orderBook;
-        this.onNewData();
-      }
-    );
-    this.eventEmitter.on(
-      `onOrderBook.${params.exchangeB}.${params.symbolB}`,
-      (orderBook: Orderbook) => {
-        this.orderBookB = orderBook;
-        this.onNewData();
-      }
-    );
+    super(callbacks);
+  }
+
+  onCandlestick(candlesticks: Candlestick[], time: Date) {}
+
+  onOrderBook(orderBook: OrderBook): void {
+    if (orderBook.exchange === this.orderBookA?.exchange) {
+      this.orderBookA = orderBook;
+    } else if (orderBook.exchange === this.orderBookB?.exchange) {
+      this.orderBookB = orderBook;
+    }
+    this.onNewData();
   }
 
   private onNewData() {
@@ -39,13 +39,13 @@ export class Arbitrage {
       const spread = ((bestAskB - bestBidA) / bestBidA) * 100;
 
       if (spread >= this.params.spread) {
-        this.eventEmitter.emit('arbitrageSignal', {
+        /*        this.eventEmitter.emit('arbitrageSignal', {
           spread,
           symbolA: this.params.symbolA,
           symbolB: this.params.symbolB,
           exchangeA: this.params.exchangeA,
           exchangeB: this.params.exchangeB
-        });
+        });*/
       }
     }
   }

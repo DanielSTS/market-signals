@@ -1,4 +1,4 @@
-import { Orderbook, OrderBookLevel } from '../domain/market-data/orderbook';
+import { OrderBook, OrderBookLevel } from '../domain/market-data/order-book';
 import { MdService } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
 import { WebsocketAdapter } from './websocket-adapter';
@@ -108,7 +108,7 @@ export class FoxbitMdService extends MdService {
     const asks: OrderBookLevel[] = [
       [payload.BestOffer, Number.MAX_SAFE_INTEGER]
     ];
-    const orderBook = new Orderbook(payload.MarketId, 'foxbit', bids, asks);
+    const orderBook = new OrderBook(payload.MarketId, 'foxbit', bids, asks);
     this.emitOrderBook(orderBook);
   }
 

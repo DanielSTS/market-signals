@@ -1,6 +1,6 @@
 export type OrderBookLevel = [price: number, quantity: number];
 
-export class Orderbook {
+export class OrderBook {
   constructor(
     readonly symbol: string,
     readonly exchange: string,

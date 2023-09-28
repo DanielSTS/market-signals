@@ -1,13 +1,36 @@
-import { CandlestickManager } from '../market-data/candle-manager';
-import { Strategy } from './strategy';
+import { Strategy, StrategyCallbacks } from './strategy';
 import { Candlestick } from '../market-data/candlestick';
+import { OrderBook } from '../market-data/order-book';
 
-export class CrossAverage implements Strategy {
-  constructor(private readonly candlestickManager: CandlestickManager) {
-    this.candlestickManager.subscribe(this.onCandlestick);
+export class CrossAverage extends Strategy {
+  constructor(callbacks: StrategyCallbacks) {
+    super(callbacks);
   }
 
-  onCandlestick(candlesticks: Candlestick[]): void {
-    console.log('new candlesticks', candlesticks);
+  onCandlestick(candlesticks: Candlestick[], time: Date): void {
+    const len = candlesticks.length;
+    if (len < 20) {
+      return;
+    }
+
+    const penu = candlesticks[len - 2].close;
+    const last = candlesticks[len - 1].close;
+    const price = last;
+
+    const open = this.openPositions();
+
+    if (open.length == 0) {
+      if (last < penu) {
+        this.callbacks.onBuySignal(price, time);
+      }
+    } else if (last > penu) {
+      open.forEach(p => {
+        if (p.enter.price * 1.01 < price) {
+          this.callbacks.onSellSignal(price, p.enter.size, time, p);
+        }
+      });
+    }
   }
+
+  onOrderBook(orderBook: OrderBook): void {}
 }
