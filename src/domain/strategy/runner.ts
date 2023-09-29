@@ -5,8 +5,8 @@ import { Position } from './position';
 export abstract class Runner {
   protected strategy: Strategy;
   protected constructor(
-    readonly start: Date,
-    readonly end: Date,
+    readonly startTime: Date,
+    readonly endTime: Date,
     readonly interval: string,
     readonly symbol: string,
     readonly strategyType: string,
@@ -30,17 +30,17 @@ export abstract class Runner {
     const total = positions.reduce((r, p) => {
       return r + p.profit();
     }, 0);
-
-    const prof = `${total}`;
-    console.log(`Total: ${prof}`);
+    console.log(`Total: ${total}`);
   }
 
   abstract onBuySignal(price: number, time: Date): void;
 
   abstract onSellSignal(
     price: number,
-    size: number,
+    quantity: number,
     time: Date,
     position: Position
   ): void;
+
+  abstract start(): void;
 }

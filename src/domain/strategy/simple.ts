@@ -2,7 +2,7 @@ import { Strategy, StrategyCallbacks } from './strategy';
 import { Candlestick } from '../market-data/candlestick';
 import { OrderBook } from '../market-data/order-book';
 
-export class CrossAverage extends Strategy {
+export class Simple extends Strategy {
   constructor(callbacks: StrategyCallbacks) {
     super(callbacks);
   }
@@ -13,20 +13,25 @@ export class CrossAverage extends Strategy {
       return;
     }
 
-    const penu = candlesticks[len - 2].close;
+    const penultimate = candlesticks[len - 2].close;
     const last = candlesticks[len - 1].close;
     const price = last;
 
-    const open = this.openPositions();
+    const openPositions = this.openPositions();
 
-    if (open.length == 0) {
-      if (last < penu) {
+    if (openPositions.length == 0) {
+      if (last < penultimate) {
         this.callbacks.onBuySignal(price, time);
       }
-    } else if (last > penu) {
-      open.forEach(p => {
-        if (p.enter.price * 1.01 < price) {
-          this.callbacks.onSellSignal(price, p.enter.size, time, p);
+    } else if (last > penultimate) {
+      openPositions.forEach(position => {
+        if (position.enter.price * 1.01 < price) {
+          this.callbacks.onSellSignal(
+            price,
+            position.enter.quantity,
+            time,
+            position
+          );
         }
       });
     }

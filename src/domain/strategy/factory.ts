@@ -1,5 +1,5 @@
 import { Arbitrage } from './arbitrage';
-import { CrossAverage } from './cross-average';
+import { Simple } from './simple';
 import { StrategyCallbacks } from './strategy';
 
 export function FactoryStrategyCreate(
@@ -11,6 +11,6 @@ export function FactoryStrategyCreate(
     case 'arbitrage':
       return new Arbitrage(params, callbacks);
     default:
-      return new CrossAverage(callbacks);
+      return new Simple(callbacks);
   }
 }

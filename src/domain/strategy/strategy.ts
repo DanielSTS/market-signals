@@ -7,7 +7,7 @@ export type StrategyCallbacks = {
   onBuySignal: (price: number, time: Date) => void;
   onSellSignal: (
     price: number,
-    size: number,
+    quantity: number,
     time: Date,
     position: Position
   ) => void;
@@ -22,7 +22,7 @@ export abstract class Strategy {
   }
 
   openPositions() {
-    return this.getPositions().filter(p => p.state === 'open');
+    return this.getPositions().filter(position => position.state === 'open');
   }
 
   async positionOpened(price: number, time: Date, amount: number, id: string) {

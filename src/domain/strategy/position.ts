@@ -24,8 +24,7 @@ export class Position {
 
     let profit = '';
     if (this.state === 'closed') {
-      const prof = `${this.profitString()}`;
-      profit = `Profit: ${prof}`;
+      profit = `Profit: ${this.profitString()}`;
     }
 
     console.log(`${enter} - ${exit} - ${profit}`);
