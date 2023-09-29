@@ -64,11 +64,11 @@ export class FoxbitMdService extends MdService {
       o: payload
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptionManager.subscribe(symbol);
+    this.subscriptionManagerOrderBook.subscribe(symbol);
   }
 
   unsubscribeOrderBook(symbol: string): void {
-    if (!this.subscriptionManager.hasSubscriptions(symbol)) {
+    if (!this.subscriptionManagerOrderBook.hasSubscriptions(symbol)) {
       return;
     }
     const payload = JSON.stringify({
@@ -81,7 +81,7 @@ export class FoxbitMdService extends MdService {
       o: payload
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptionManager.unsubscribe(symbol);
+    this.subscriptionManagerOrderBook.unsubscribe(symbol);
   }
 
   private processMessage(data: string): void {
@@ -165,8 +165,7 @@ export class FoxbitMdService extends MdService {
   subscribeCandlestick(symbol: string, interval: string): void {
     const payload = JSON.stringify({
       MarketId: symbol,
-      Interval: 60,
-      IncludeLastCount: 100
+      Interval: 60
     });
     const messageFrame: MessageFrame = {
       m: 2,
@@ -178,5 +177,21 @@ export class FoxbitMdService extends MdService {
     this.subscriptionManagerCandlestick.subscribe(symbol);
   }
 
-  unsubscribeCandlestick(symbol: string, interval: string): void {}
+  unsubscribeCandlestick(symbol: string, interval: string): void {
+    if (!this.subscriptionManagerCandlestick.hasSubscriptions(symbol)) {
+      return;
+    }
+    const payload = JSON.stringify({
+      MarketId: symbol,
+      Interval: 60
+    });
+    const messageFrame: MessageFrame = {
+      m: 2,
+      i: this.nextSequenceNumber(),
+      n: 'UnSubscribeTicker',
+      o: payload
+    };
+    this.ws.send(JSON.stringify(messageFrame));
+    this.subscriptionManagerCandlestick.unsubscribe(symbol);
+  }
 }

@@ -74,11 +74,11 @@ export class BinanceMdService extends MdService {
       id: this.nextSequenceNumber()
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptionManager.subscribe(symbol);
+    this.subscriptionManagerOrderBook.subscribe(symbol);
   }
 
   unsubscribeOrderBook(symbol: string): void {
-    if (!this.subscriptionManager.hasSubscriptions(symbol)) {
+    if (!this.subscriptionManagerOrderBook.hasSubscriptions(symbol)) {
       return;
     }
     const stream = `${symbol.toLowerCase()}@bookTicker`;
@@ -88,7 +88,7 @@ export class BinanceMdService extends MdService {
       id: this.nextSequenceNumber()
     };
     this.ws.send(JSON.stringify(messageFrame));
-    this.subscriptionManager.unsubscribe(symbol);
+    this.subscriptionManagerOrderBook.unsubscribe(symbol);
   }
 
   private processMessage(data: string) {

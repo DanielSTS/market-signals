@@ -1,7 +1,7 @@
 import { Candlestick } from '../market-data/candlestick';
 import { OrderBook } from '../market-data/order-book';
-import { Position } from './position';
-import { Trade } from './trade';
+import { Position } from '../core/position';
+import { Trade } from '../core/trade';
 
 export type StrategyCallbacks = {
   onBuySignal: (price: number, time: Date) => void;
@@ -39,7 +39,7 @@ export abstract class Strategy {
     }
   }
 
-  abstract onCandlestick(candlesticks: Candlestick[], time: Date): void;
+  abstract onCandlestick(candlesticks: Candlestick[]): void;
 
   abstract onOrderBook(orderBook: OrderBook): void;
 }

@@ -1,4 +1,4 @@
-import Instrument from '../../src/domain/market-data/instrument';
+import Instrument from '../../src/domain/core/instrument';
 
 describe('Instrument', () => {
   it('should create an instance of Instrument with correct properties', () => {

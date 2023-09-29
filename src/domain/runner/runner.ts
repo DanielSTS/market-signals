@@ -1,12 +1,10 @@
-import { Strategy } from './strategy';
-import { FactoryStrategyCreate } from './factory';
-import { Position } from './position';
+import { Strategy } from '../strategy/strategy';
+import { FactoryStrategyCreate } from '../strategy/factory';
+import { Position } from '../core/position';
 
 export abstract class Runner {
   protected strategy: Strategy;
   protected constructor(
-    readonly startTime: Date,
-    readonly endTime: Date,
     readonly interval: string,
     readonly symbol: string,
     readonly strategyType: string,

@@ -1,19 +1,21 @@
 import EventEmitter from 'events';
 import { OrderBook } from './order-book';
-import { SubscriptionManager } from './subscription-manager';
+import { SubscriptionManager } from '../core/subscription-manager';
 import { Candlestick } from './candlestick';
 
 export abstract class MdService {
-  protected subscriptionManager = new SubscriptionManager();
+  protected subscriptionManagerOrderBook = new SubscriptionManager();
   protected subscriptionManagerCandlestick = new SubscriptionManager();
   private sequenceNumber = 0;
   protected constructor(private readonly eventEmitter: EventEmitter) {}
 
   protected processOpen(): void {
     console.log('Connection Open: Sending subscriptions...');
-    this.subscriptionManager.getUniqueSubscriptions().forEach(symbol => {
-      this.subscribeOrderBook(symbol);
-    });
+    this.subscriptionManagerOrderBook
+      .getUniqueSubscriptions()
+      .forEach(symbol => {
+        this.subscribeOrderBook(symbol);
+      });
     this.subscriptionManagerCandlestick
       .getUniqueSubscriptions()
       .forEach(symbol => {

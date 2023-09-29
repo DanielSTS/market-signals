@@ -7,7 +7,7 @@ export class Simple extends Strategy {
     super(callbacks);
   }
 
-  onCandlestick(candlesticks: Candlestick[], time: Date): void {
+  onCandlestick(candlesticks: Candlestick[]): void {
     const len = candlesticks.length;
     if (len < 20) {
       return;
@@ -21,15 +21,15 @@ export class Simple extends Strategy {
 
     if (openPositions.length == 0) {
       if (last < penultimate) {
-        this.callbacks.onBuySignal(price, time);
+        this.callbacks.onBuySignal(price, new Date());
       }
     } else if (last > penultimate) {
       openPositions.forEach(position => {
-        if (position.enter.price * 1.01 < price) {
+        if (position.enterTrade.price * 1.01 < price) {
           this.callbacks.onSellSignal(
             price,
-            position.enter.quantity,
-            time,
+            position.enterTrade.quantity,
+            new Date(),
             position
           );
         }

@@ -1,19 +1,19 @@
 import { Runner } from './runner';
-import { Position } from './position';
+import { Position } from '../core/position';
 import { MdService } from '../market-data/md.service';
 import crypto from 'node:crypto';
 
 export class BackTester extends Runner {
   constructor(
+    private readonly startTime: Date,
+    private readonly endTime: Date,
     private readonly mdService: MdService,
-    startTime: Date,
-    endTime: Date,
     interval: string,
     symbol: string,
     strategyType: string,
     strategyParams: any
   ) {
-    super(startTime, endTime, interval, symbol, strategyType, strategyParams);
+    super(interval, symbol, strategyType, strategyParams);
   }
   async start() {
     try {
@@ -27,10 +27,7 @@ export class BackTester extends Runner {
       await Promise.all(
         history.map((candlestick, index) => {
           const candlesticks = history.slice(0, index + 1);
-          return this.strategy.onCandlestick(
-            candlesticks,
-            candlestick.timestamp
-          );
+          return this.strategy.onCandlestick(candlesticks);
         })
       );
 

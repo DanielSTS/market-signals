@@ -11,7 +11,7 @@ export class CandlestickManager {
     private readonly mdService: MdService
   ) {}
 
-  onCandlestick(candle: Candlestick) {
+  private onCandlestick(candle: Candlestick) {
     if (this.historicalCandles.length === 0) return;
 
     const lastHistoricalCandle =

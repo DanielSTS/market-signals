@@ -6,7 +6,7 @@ import { Arbitrage, ArbitrageParams } from './domain/strategy/arbitrage';
 import { AxiosAdapter } from './infra/axios-adapter';
 import { CandlestickManager } from './domain/market-data/candle-manager';
 import { Simple } from './domain/strategy/simple';
-import { BackTester } from './domain/strategy/backtest';
+import { BackTester } from './domain/runner/backtest';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -22,16 +22,16 @@ async function main() {
     console.log(data);
   });*/
 
-  /*  const wsFoxbit = new WsAdapter('wss://api.foxbit.com.br/');
+  const wsFoxbit = new WsAdapter('wss://api.foxbit.com.br/');
   const restFoxbit = new AxiosAdapter('https://api.foxbit.com.br/rest/v3/');
   const mdFoxbit = new FoxbitMdService(eventEmitter, wsFoxbit, restFoxbit);
 
-  mdFoxbit.subscribeCandlestick(
-    'btcbrl',
-    '1h',
-    new Date('2022-07-18T00:00'),
-    new Date('2022-08-19T12:00')
-  );*/
+  /*  mdFoxbit.subscribeCandlestick(
+     'btcbrl',
+     '1h',
+     new Date('2022-07-18T00:00'),
+     new Date('2022-08-19T12:00')
+   );*/
 
   /*  console.log(
     await mdFoxbit.getCandlestick(
@@ -42,14 +42,14 @@ async function main() {
     )
   );*/
 
-  const wsBinance = new WsAdapter('wss://stream.binance.com:9443/ws');
+  /*  const wsBinance = new WsAdapter('wss://stream.binance.com:9443/ws');
   const restBinance = new AxiosAdapter('https://api.binance.com/api/v3/');
-  const mdBinance = new BinanceMdService(eventEmitter, wsBinance, restBinance);
+  const mdBinance = new BinanceMdService(eventEmitter, wsBinance, restBinance);*/
 
   const bt = new BackTester(
-    mdBinance,
     new Date('2022-07-18T00:00'),
-    new Date('2022-08-19T12:00'),
+    new Date('2022-08-20T12:00'),
+    mdFoxbit,
     '1h',
     'btcbrl',
     'cross',

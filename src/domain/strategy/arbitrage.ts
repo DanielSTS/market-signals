@@ -21,7 +21,7 @@ export class Arbitrage extends Strategy {
     super(callbacks);
   }
 
-  onCandlestick(candlesticks: Candlestick[], time: Date) {}
+  onCandlestick(candlesticks: Candlestick[]) {}
 
   onOrderBook(orderBook: OrderBook): void {
     if (orderBook.exchange === this.orderBookA?.exchange) {
