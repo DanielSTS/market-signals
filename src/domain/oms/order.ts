@@ -1,4 +1,4 @@
-import Exchange from './exchange';
+import Exchange from '../core/exchange';
 
 export type OrderSide = 'BUY' | 'SELL';
 export type OrderStatus = 'NEW' | 'OPEN' | 'FILLED';

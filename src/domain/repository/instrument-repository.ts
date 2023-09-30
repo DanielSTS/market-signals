@@ -1,4 +1,4 @@
-import Instrument from './instrument';
+import Instrument from '../core/instrument';
 
 export default interface InstrumentRepository {
   getBySymbolAndExchange(

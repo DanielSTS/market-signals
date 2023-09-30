@@ -1,7 +1,7 @@
-import FoxbitMdService from './infra/foxbit-md-service';
 import EventEmitter from 'events';
 import WsAdapter from './infra/ws-adapter';
 import AxiosAdapter from './infra/axios-adapter';
+import FoxbitMdService from './application/exchange/foxbit-md-service';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -50,9 +50,9 @@ async function main() {
   //   'bb',
   //   {}
   // );
-
-  bt.start();
   /*
+  bt.start();
+ 
    mdBinance.subscribeCandlestick('btcbrl', '1h');
    console.log(
     await mdBinance.getCandlestick(

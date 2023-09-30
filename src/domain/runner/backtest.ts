@@ -1,9 +1,9 @@
 import Runner from './runner';
-import Position from '../core/position';
 import { MdService } from '../market-data/md.service';
 import crypto from 'crypto';
 import Timeframe from '../core/timeframe';
 import Instrument from '../core/instrument';
+import Position from '../oms/position';
 
 export default class Backtest extends Runner {
   constructor(

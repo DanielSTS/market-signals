@@ -1,4 +1,4 @@
-import BacktestRepository from '../domain/core/backtest-repository';
+import BacktestRepository from '../domain/repository/backtest-repository';
 import Backtest from '../domain/runner/backtest';
 
 export default class InMemoryBacktestRepository implements BacktestRepository {

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { RestAdapter } from './rest-adapter';
+import RestAdapter from './rest-adapter';
 
 export default class AxiosAdapter implements RestAdapter {
   private axiosInstance: AxiosInstance;

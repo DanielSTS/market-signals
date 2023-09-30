@@ -1,7 +1,7 @@
 import Candlestick from '../market-data/candlestick';
 import OrderBook from '../market-data/order-book';
-import Position from '../core/position';
-import Trade from '../core/trade';
+import Position from '../oms/position';
+import Trade from '../oms/trade';
 
 export type StrategyCallbacks = {
   onBuySignal: (price: number, time: Date) => void;

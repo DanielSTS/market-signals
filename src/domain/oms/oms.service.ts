@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
-import Order from '../core/order';
-import Trade from '../core/trade';
+import Order from './order';
+import Trade from './trade';
 
 export default abstract class OmsService {
   protected constructor(private readonly eventEmitter: EventEmitter) {}

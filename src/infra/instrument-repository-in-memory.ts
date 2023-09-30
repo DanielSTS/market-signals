@@ -1,5 +1,5 @@
 import Instrument from '../domain/core/instrument';
-import InstrumentRepository from '../domain/core/instrument-repository';
+import InstrumentRepository from '../domain/repository/instrument-repository';
 
 export default class InMemoryInstrumentRepository
   implements InstrumentRepository

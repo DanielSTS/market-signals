@@ -1,9 +1,9 @@
-import BacktestRepository from '../domain/core/backtest-repository';
-import Exchange from '../domain/core/exchange';
-import InstrumentRepository from '../domain/core/instrument-repository';
-import Timeframe from '../domain/core/timeframe';
-import { MdService } from '../domain/market-data/md.service';
-import Backtest from '../domain/runner/backtest';
+import BacktestRepository from '../../domain/repository/backtest-repository';
+import Exchange from '../../domain/core/exchange';
+import InstrumentRepository from '../../domain/repository/instrument-repository';
+import Timeframe from '../../domain/core/timeframe';
+import { MdService } from '../../domain/market-data/md.service';
+import Backtest from '../../domain/runner/backtest';
 import crypto from 'crypto';
 
 export default class CreateBacktest {

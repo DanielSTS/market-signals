@@ -1,6 +1,6 @@
-import { Candlestick } from '../market-data/candlestick';
-import { OrderBook } from '../market-data/order-book';
-import { Strategy, StrategyCallbacks } from './strategy';
+import Candlestick from '../market-data/candlestick';
+import OrderBook from '../market-data/order-book';
+import Strategy, { StrategyCallbacks } from './strategy';
 
 export default class BollingerBands extends Strategy {
   constructor(

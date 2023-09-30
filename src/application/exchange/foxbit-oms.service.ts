@@ -1,7 +1,7 @@
-import OmsService from '../domain/oms/oms.service';
-import Order from '../domain/core/order';
-import RestAdapter from './rest-adapter';
 import EventEmitter from 'events';
+import OmsService from '../../domain/oms/oms.service';
+import Order from '../../domain/oms/order';
+import RestAdapter from '../../infra/rest-adapter';
 
 type OrderResponse = {
   id: string;
