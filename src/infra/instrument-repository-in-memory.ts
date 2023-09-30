@@ -1,7 +1,9 @@
 import Instrument from '../domain/core/instrument';
 import InstrumentRepository from '../domain/core/instrument-repository';
 
-export class InMemoryInstrumentRepository implements InstrumentRepository {
+export default class InMemoryInstrumentRepository
+  implements InstrumentRepository
+{
   private instruments: Instrument[] = [];
 
   constructor() {

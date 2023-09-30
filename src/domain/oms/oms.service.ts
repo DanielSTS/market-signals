@@ -1,8 +1,8 @@
 import EventEmitter from 'events';
-import { Order } from '../core/order';
-import { Trade } from '../core/trade';
+import Order from '../core/order';
+import Trade from '../core/trade';
 
-export abstract class OmsService {
+export default abstract class OmsService {
   protected constructor(private readonly eventEmitter: EventEmitter) {}
 
   protected emitOrder(order: Order) {

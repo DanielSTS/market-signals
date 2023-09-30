@@ -1,7 +1,7 @@
-import { Candlestick } from '../market-data/candlestick';
-import { OrderBook } from '../market-data/order-book';
-import { Position } from '../core/position';
-import { Trade } from '../core/trade';
+import Candlestick from '../market-data/candlestick';
+import OrderBook from '../market-data/order-book';
+import Position from '../core/position';
+import Trade from '../core/trade';
 
 export type StrategyCallbacks = {
   onBuySignal: (price: number, time: Date) => void;
@@ -12,7 +12,7 @@ export type StrategyCallbacks = {
     position: Position
   ) => void;
 };
-export abstract class Strategy {
+export default abstract class Strategy {
   private positions = new Map<string, Position>();
 
   protected constructor(protected readonly callbacks: StrategyCallbacks) {}

@@ -1,12 +1,7 @@
-import { FoxbitMdService } from './infra/foxbit-md-service';
+import FoxbitMdService from './infra/foxbit-md-service';
 import EventEmitter from 'events';
-import { WsAdapter } from './infra/ws-adapter';
-import { BinanceMdService } from './infra/binance-md-service';
-import { Arbitrage, ArbitrageParams } from './domain/strategy/arbitrage';
-import { AxiosAdapter } from './infra/axios-adapter';
-import { CandlestickManager } from './domain/market-data/candle-manager';
-import { Simple } from './domain/strategy/simple';
-import { Backtest } from './domain/runner/backtest';
+import WsAdapter from './infra/ws-adapter';
+import AxiosAdapter from './infra/axios-adapter';
 
 async function main() {
   const eventEmitter = new EventEmitter();

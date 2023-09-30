@@ -1,4 +1,4 @@
-import { SubscriptionManager } from '../../src/domain/core/subscription-manager';
+import SubscriptionManager  from '../../src/domain/core/subscription-manager';
 
 describe('SubscriptionManager', () => {
   let subscriptionManager: SubscriptionManager;

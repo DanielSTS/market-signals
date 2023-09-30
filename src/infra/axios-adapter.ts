@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { RestAdapter } from './rest-adapter';
 
-export class AxiosAdapter implements RestAdapter {
+export default class AxiosAdapter implements RestAdapter {
   private axiosInstance: AxiosInstance;
 
   constructor(baseURL: string) {

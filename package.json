@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx src/main.ts",
     "test": "jest",
+    "test-coverage": "jest --coverage",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "eslint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix"
   },

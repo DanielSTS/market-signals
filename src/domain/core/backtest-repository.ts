@@ -1,6 +1,6 @@
-import { Backtest } from '../runner/backtest';
+import Backtest from '../runner/backtest';
 
 export default interface BacktestRepository {
-  save(backtest: Backtest): void;
-  getById(id: string): Backtest | undefined;
+  save(backtest: Backtest): Promise<void>;
+  getById(id: string): Promise<Backtest | undefined>;
 }

@@ -1,4 +1,4 @@
-export interface WebsocketAdapter {
+export default interface WebsocketAdapter {
   open(): void;
   close(): void;
   send(data: string): void;

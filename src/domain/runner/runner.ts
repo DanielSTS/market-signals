@@ -1,10 +1,10 @@
-import { Strategy } from '../strategy/strategy';
-import { FactoryStrategyCreate } from '../strategy/factory';
-import { Position } from '../core/position';
+import Strategy from '../strategy/strategy';
+import FactoryStrategyCreate from '../strategy/factory';
+import Position from '../core/position';
 import Timeframe from '../core/timeframe';
 import Instrument from '../core/instrument';
 
-export abstract class Runner {
+export default abstract class Runner {
   protected strategy: Strategy;
   protected constructor(
     readonly timeframe: Timeframe,

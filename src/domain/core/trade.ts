@@ -1,4 +1,4 @@
-export class Trade {
+export default class Trade {
   constructor(
     readonly price: number,
     readonly time: Date,

@@ -1,6 +1,5 @@
 import Exchange from '../../src/domain/core/exchange';
-import {
-  OrderBook,
+import OrderBook, {
   OrderBookLevel
 } from '../../src/domain/market-data/order-book';
 

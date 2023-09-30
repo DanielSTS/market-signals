@@ -1,8 +1,8 @@
-import { Strategy, StrategyCallbacks } from './strategy';
-import { Candlestick } from '../market-data/candlestick';
-import { OrderBook } from '../market-data/order-book';
+import Strategy, { StrategyCallbacks } from './strategy';
+import Candlestick from '../market-data/candlestick';
+import OrderBook from '../market-data/order-book';
 
-export class Simple extends Strategy {
+export default class Simple extends Strategy {
   constructor(callbacks: StrategyCallbacks) {
     super(callbacks);
   }

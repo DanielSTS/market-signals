@@ -1,11 +1,11 @@
-import { Runner } from './runner';
-import { Position } from '../core/position';
+import Runner from './runner';
+import Position from '../core/position';
 import { MdService } from '../market-data/md.service';
 import crypto from 'crypto';
 import Timeframe from '../core/timeframe';
 import Instrument from '../core/instrument';
 
-export class Backtest extends Runner {
+export default class Backtest extends Runner {
   constructor(
     readonly id: string,
     private readonly startTime: Date,

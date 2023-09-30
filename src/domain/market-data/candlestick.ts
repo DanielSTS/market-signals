@@ -1,6 +1,6 @@
 import Exchange from '../core/exchange';
 
-export class Candlestick {
+export default class Candlestick {
   constructor(
     readonly timestamp: Date,
     readonly open: number,

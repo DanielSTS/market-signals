@@ -1,7 +1,7 @@
 import { WebSocket } from 'ws';
-import { WebsocketAdapter } from './websocket-adapter';
+import WebsocketAdapter from './websocket-adapter';
 
-export class WsAdapter implements WebsocketAdapter {
+export default class WsAdapter implements WebsocketAdapter {
   private ws?: WebSocket;
   private pingInterval?: NodeJS.Timeout;
   private onMessageCallback?: (data: string) => void;

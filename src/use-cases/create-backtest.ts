@@ -3,7 +3,7 @@ import Exchange from '../domain/core/exchange';
 import InstrumentRepository from '../domain/core/instrument-repository';
 import Timeframe from '../domain/core/timeframe';
 import { MdService } from '../domain/market-data/md.service';
-import { Backtest } from '../domain/runner/backtest';
+import Backtest from '../domain/runner/backtest';
 import crypto from 'crypto';
 
 export default class CreateBacktest {
@@ -12,7 +12,7 @@ export default class CreateBacktest {
     private readonly backtestRepository: BacktestRepository,
     private readonly mdService: MdService
   ) {}
-  async execute(input: Input): Promise<void> {
+  async execute(input: Input): Promise<string> {
     const exchange = new Exchange(input.exchange);
     const timeframe = new Timeframe(input.timeframe);
     const instrument = await this.instrumentRepository.getBySymbolAndExchange(
@@ -33,7 +33,8 @@ export default class CreateBacktest {
       input.strategyType,
       input.strategyParams
     );
-    this.backtestRepository.save(backtest);
+    await this.backtestRepository.save(backtest);
+    return id;
   }
 }
 

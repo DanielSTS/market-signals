@@ -1,6 +1,6 @@
-import { Trade } from './trade';
+import Trade from './trade';
 
-export class Position {
+export default class Position {
   private state = 'open';
   readonly enterTrade: Trade;
   exitTrade?: Trade;

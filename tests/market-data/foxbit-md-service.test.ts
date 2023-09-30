@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
-import { FoxbitMdService } from '../../src/infra/foxbit-md-service';
-import { WebsocketAdapter } from '../../src/infra/websocket-adapter';
-import { RestAdapter } from '../../src/infra/rest-adapter';
+import FoxbitMdService from '../../src/infra/foxbit-md-service';
+import WebsocketAdapter from '../../src/infra/websocket-adapter';
+import RestAdapter from '../../src/infra/rest-adapter';
 import Timeframe from '../../src/domain/core/timeframe';
 import Exchange from '../../src/domain/core/exchange';
 

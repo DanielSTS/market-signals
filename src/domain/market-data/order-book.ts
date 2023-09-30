@@ -2,7 +2,7 @@ import Exchange from '../core/exchange';
 
 export type OrderBookLevel = [price: number, quantity: number];
 
-export class OrderBook {
+export default class OrderBook {
   constructor(
     readonly symbol: string,
     readonly exchange: Exchange,

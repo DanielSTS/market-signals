@@ -1,4 +1,4 @@
-export class SubscriptionManager {
+export default class SubscriptionManager {
   private subscriptions = new Map<string, number>();
 
   subscribe(symbol: string): void {

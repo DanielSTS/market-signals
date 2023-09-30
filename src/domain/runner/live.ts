@@ -1,11 +1,11 @@
-import { Runner } from './runner';
-import { Position } from '../core/position';
+import Runner from './runner';
+import Position from '../core/position';
 import crypto from 'node:crypto';
-import { CandlestickManager } from '../market-data/candle-manager';
+import CandlestickManager from '../market-data/candle-manager';
 import Timeframe from '../core/timeframe';
 import Instrument from '../core/instrument';
 
-export class Live extends Runner {
+export default class Live extends Runner {
   constructor(
     private readonly candlestickManager: CandlestickManager,
     timeframe: Timeframe,

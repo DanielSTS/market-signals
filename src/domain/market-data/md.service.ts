@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
-import { OrderBook } from './order-book';
-import { SubscriptionManager } from '../core/subscription-manager';
-import { Candlestick } from './candlestick';
+import OrderBook from './order-book';
+import SubscriptionManager from '../core/subscription-manager';
+import Candlestick from './candlestick';
 import Timeframe from '../core/timeframe';
 import Exchange from '../core/exchange';
 
@@ -21,7 +21,7 @@ export interface MdService {
   ): Promise<Candlestick[]>;
 }
 
-export abstract class MdServiceBase implements MdService {
+export default abstract class MdServiceBase implements MdService {
   protected subscriptionManagerOrderBook = new SubscriptionManager();
   protected subscriptionManagerCandlestick = new SubscriptionManager();
   private sequenceNumber = 0;

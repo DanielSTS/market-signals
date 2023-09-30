@@ -1,8 +1,8 @@
 import BacktestRepository from '../../src/domain/core/backtest-repository';
 import InstrumentRepository from '../../src/domain/core/instrument-repository';
 import { MdService } from '../../src/domain/market-data/md.service';
-import { InMemoryBacktestRepository } from '../../src/infra/backtest-repository-in-memory';
-import { InMemoryInstrumentRepository } from '../../src/infra/instrument-repository-in-memory';
+import InMemoryBacktestRepository from '../../src/infra/backtest-repository-in-memory';
+import InMemoryInstrumentRepository from '../../src/infra/instrument-repository-in-memory';
 import createBacktest from '../../src/use-cases/create-backtest';
 
 function makeMdService(): MdService {
@@ -26,7 +26,7 @@ describe('createBacktest', () => {
     mdService = makeMdService();
   });
 
-  it('should create a new backtest and save it in the repository', () => {
+  it('should create a new backtest and save it in the repository', async () => {
     const input = {
       exchange: 'binance',
       symbol: 'btcbrl',
@@ -46,6 +46,9 @@ describe('createBacktest', () => {
       mdService
     );
 
-    useCase.execute(input);
+    const id = await useCase.execute(input);
+    const backtest = await backtestRepository.getById(id);
+
+    expect(backtest).toBeDefined();
   });
 });

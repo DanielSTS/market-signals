@@ -1,9 +1,9 @@
 import Timeframe from '../core/timeframe';
-import { Candlestick } from './candlestick';
+import Candlestick from './candlestick';
 import { MdService } from './md.service';
 import EventEmitter from 'events';
 
-export class CandlestickManager {
+export default class CandlestickManager {
   private historicalCandles: Candlestick[] = [];
   private subscribers: ((candlesticks: Candlestick[]) => void)[] = [];
 

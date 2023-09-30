@@ -1,14 +1,14 @@
 import BacktestRepository from '../domain/core/backtest-repository';
-import { Backtest } from '../domain/runner/backtest';
+import Backtest from '../domain/runner/backtest';
 
-export class InMemoryBacktestRepository implements BacktestRepository {
+export default class InMemoryBacktestRepository implements BacktestRepository {
   private backtests: Backtest[] = [];
 
-  save(backtest: Backtest): void {
+  async save(backtest: Backtest): Promise<void> {
     this.backtests.push(backtest);
   }
 
-  getById(id: string): Backtest | undefined {
+  async getById(id: string): Promise<Backtest | undefined> {
     return this.backtests.find(backtest => backtest.id === id);
   }
 }

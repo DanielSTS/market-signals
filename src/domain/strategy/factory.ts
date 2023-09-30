@@ -1,9 +1,9 @@
-import { Arbitrage } from './arbitrage';
+import Arbitrage from './arbitrage';
 import BollingerBands from './bollinger-bands';
-import { Simple } from './simple';
+import Simple from './simple';
 import { StrategyCallbacks } from './strategy';
 
-export function FactoryStrategyCreate(
+export default function FactoryStrategyCreate(
   type: string,
   params: any,
   callbacks: StrategyCallbacks

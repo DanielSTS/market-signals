@@ -1,9 +1,9 @@
-import { OrderBook, OrderBookLevel } from '../domain/market-data/order-book';
+import OrderBook, { OrderBookLevel } from '../domain/market-data/order-book';
 import EventEmitter from 'events';
-import { WebsocketAdapter } from './websocket-adapter';
-import { RestAdapter } from './rest-adapter';
-import { Candlestick } from '../domain/market-data/candlestick';
-import { MdServiceBase } from '../domain/market-data/md.service';
+import WebsocketAdapter from './websocket-adapter';
+import RestAdapter from './rest-adapter';
+import Candlestick from '../domain/market-data/candlestick';
+import MdServiceBase from '../domain/market-data/md.service';
 import Exchange from '../domain/core/exchange';
 import Timeframe from '../domain/core/timeframe';
 
@@ -28,7 +28,7 @@ type TickerDataUpdateEvent = [
   close: string,
   volume: string
 ];
-export class FoxbitMdService extends MdServiceBase {
+export default class FoxbitMdService extends MdServiceBase {
   constructor(
     eventEmitter: EventEmitter,
     private ws: WebsocketAdapter,

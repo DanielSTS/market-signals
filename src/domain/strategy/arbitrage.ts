@@ -1,6 +1,6 @@
-import { Candlestick } from '../market-data/candlestick';
-import { OrderBook } from '../market-data/order-book';
-import { Strategy, StrategyCallbacks } from './strategy';
+import Candlestick from '../market-data/candlestick';
+import OrderBook from '../market-data/order-book';
+import Strategy, { StrategyCallbacks } from './strategy';
 
 export type ArbitrageParams = {
   symbolA: string;
@@ -10,7 +10,7 @@ export type ArbitrageParams = {
   spread: number;
 };
 
-export class Arbitrage extends Strategy {
+export default class Arbitrage extends Strategy {
   private orderBookA?: OrderBook;
   private orderBookB?: OrderBook;
 

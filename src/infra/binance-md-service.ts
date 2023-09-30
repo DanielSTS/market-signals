@@ -1,9 +1,9 @@
-import { OrderBook, OrderBookLevel } from '../domain/market-data/order-book';
-import { MdServiceBase } from '../domain/market-data/md.service';
+import OrderBook, { OrderBookLevel } from '../domain/market-data/order-book';
+import MdServiceBase from '../domain/market-data/md.service';
 import EventEmitter from 'events';
-import { WebsocketAdapter } from './websocket-adapter';
-import { Candlestick } from '../domain/market-data/candlestick';
-import { RestAdapter } from './rest-adapter';
+import WebsocketAdapter from './websocket-adapter';
+import Candlestick from '../domain/market-data/candlestick';
+import RestAdapter from './rest-adapter';
 import Timeframe from '../domain/core/timeframe';
 import Exchange from '../domain/core/exchange';
 
@@ -41,7 +41,7 @@ type KlineEvent = {
   };
 };
 
-export class BinanceMdService extends MdServiceBase {
+export default class BinanceMdService extends MdServiceBase {
   constructor(
     eventEmitter: EventEmitter,
     private ws: WebsocketAdapter,
