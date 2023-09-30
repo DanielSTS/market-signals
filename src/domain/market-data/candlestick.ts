@@ -1,3 +1,5 @@
+import Exchange from '../core/exchange';
+
 export class Candlestick {
   constructor(
     readonly timestamp: Date,
@@ -6,7 +8,7 @@ export class Candlestick {
     readonly low: number,
     readonly close: number,
     readonly volume: number,
-    readonly exchange: string,
+    readonly exchange: Exchange,
     readonly symbol: string
   ) {}
 }

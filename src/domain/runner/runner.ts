@@ -1,12 +1,14 @@
 import { Strategy } from '../strategy/strategy';
 import { FactoryStrategyCreate } from '../strategy/factory';
 import { Position } from '../core/position';
+import Timeframe from '../core/timeframe';
+import Instrument from '../core/instrument';
 
 export abstract class Runner {
   protected strategy: Strategy;
   protected constructor(
-    readonly interval: string,
-    readonly symbol: string,
+    readonly timeframe: Timeframe,
+    readonly instrument: Instrument,
     readonly strategyType: string,
     readonly strategyParams: any
   ) {

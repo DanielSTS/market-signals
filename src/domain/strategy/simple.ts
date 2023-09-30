@@ -17,23 +17,21 @@ export class Simple extends Strategy {
     const last = candlesticks[len - 1].close;
     const price = last;
 
-    const openPositions = this.openPositions();
+    const positionOpened = this.openPosition();
 
-    if (openPositions.length == 0) {
+    if (!positionOpened) {
       if (last < penultimate) {
         this.callbacks.onBuySignal(price, new Date());
       }
     } else if (last > penultimate) {
-      openPositions.forEach(position => {
-        if (position.enterTrade.price * 1.01 < price) {
-          this.callbacks.onSellSignal(
-            price,
-            position.enterTrade.quantity,
-            new Date(),
-            position
-          );
-        }
-      });
+      if (positionOpened.enterTrade.price * 1.01 < price) {
+        this.callbacks.onSellSignal(
+          price,
+          positionOpened.enterTrade.quantity,
+          new Date(),
+          positionOpened
+        );
+      }
     }
   }
 

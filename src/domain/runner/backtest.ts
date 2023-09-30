@@ -1,25 +1,28 @@
 import { Runner } from './runner';
 import { Position } from '../core/position';
 import { MdService } from '../market-data/md.service';
-import crypto from 'node:crypto';
+import crypto from 'crypto';
+import Timeframe from '../core/timeframe';
+import Instrument from '../core/instrument';
 
-export class BackTester extends Runner {
+export class Backtest extends Runner {
   constructor(
+    readonly id: string,
     private readonly startTime: Date,
     private readonly endTime: Date,
     private readonly mdService: MdService,
-    interval: string,
-    symbol: string,
+    timeframe: Timeframe,
+    instrument: Instrument,
     strategyType: string,
     strategyParams: any
   ) {
-    super(interval, symbol, strategyType, strategyParams);
+    super(timeframe, instrument, strategyType, strategyParams);
   }
   async start() {
     try {
       const history = await this.mdService.getCandlestick(
-        this.symbol,
-        this.interval,
+        this.instrument.symbol,
+        this.timeframe,
         this.startTime,
         this.endTime
       );

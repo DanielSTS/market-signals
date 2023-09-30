@@ -6,7 +6,7 @@ import { Arbitrage, ArbitrageParams } from './domain/strategy/arbitrage';
 import { AxiosAdapter } from './infra/axios-adapter';
 import { CandlestickManager } from './domain/market-data/candle-manager';
 import { Simple } from './domain/strategy/simple';
-import { BackTester } from './domain/runner/backtest';
+import { Backtest } from './domain/runner/backtest';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -46,15 +46,15 @@ async function main() {
   const restBinance = new AxiosAdapter('https://api.binance.com/api/v3/');
   const mdBinance = new BinanceMdService(eventEmitter, wsBinance, restBinance);*/
 
-  const bt = new BackTester(
-    new Date('2022-07-18T00:00'),
-    new Date('2022-08-20T12:00'),
-    mdFoxbit,
-    '1h',
-    'btcbrl',
-    'cross',
-    {}
-  );
+  // const bt = new Backtest(
+  //   new Date('2022-07-18T00:00'),
+  //   new Date('2022-08-20T12:00'),
+  //   mdFoxbit,
+  //   '1h',
+  //   'btcbrl',
+  //   'bb',
+  //   {}
+  // );
 
   bt.start();
   /*

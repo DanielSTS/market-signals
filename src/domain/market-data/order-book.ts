@@ -1,9 +1,11 @@
+import Exchange from '../core/exchange';
+
 export type OrderBookLevel = [price: number, quantity: number];
 
 export class OrderBook {
   constructor(
     readonly symbol: string,
-    readonly exchange: string,
+    readonly exchange: Exchange,
     readonly bids: OrderBookLevel[],
     readonly asks: OrderBookLevel[]
   ) {

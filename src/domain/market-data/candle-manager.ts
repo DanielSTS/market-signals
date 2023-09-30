@@ -1,10 +1,11 @@
+import Timeframe from '../core/timeframe';
 import { Candlestick } from './candlestick';
 import { MdService } from './md.service';
 import EventEmitter from 'events';
 
 export class CandlestickManager {
   private historicalCandles: Candlestick[] = [];
-  private subscribers: ((candles: Candlestick[]) => void)[] = [];
+  private subscribers: ((candlesticks: Candlestick[]) => void)[] = [];
 
   constructor(
     private readonly eventEmitter: EventEmitter,
@@ -19,7 +20,7 @@ export class CandlestickManager {
 
     if (candle.timestamp <= lastHistoricalCandle.timestamp) {
       console.log(
-        'Candlestick em tempo real não é mais recente ou é duplicado.'
+        'Real-time candlestick is either not the most recent or is a duplicate.'
       );
       return;
     }
@@ -34,7 +35,7 @@ export class CandlestickManager {
     this.mdService
       .getCandlestick(
         'btcbrl',
-        '1h',
+        new Timeframe('1h'),
         new Date('2022-07-18T00:00'),
         new Date('2022-08-19T12:00')
       )

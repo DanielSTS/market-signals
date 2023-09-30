@@ -2,16 +2,18 @@ import { Runner } from './runner';
 import { Position } from '../core/position';
 import crypto from 'node:crypto';
 import { CandlestickManager } from '../market-data/candle-manager';
+import Timeframe from '../core/timeframe';
+import Instrument from '../core/instrument';
 
 export class Live extends Runner {
   constructor(
     private readonly candlestickManager: CandlestickManager,
-    interval: string,
-    symbol: string,
+    timeframe: Timeframe,
+    instrument: Instrument,
     strategyType: string,
     strategyParams: any
   ) {
-    super(interval, symbol, strategyType, strategyParams);
+    super(timeframe, instrument, strategyType, strategyParams);
   }
   async start() {
     try {

@@ -1,9 +1,11 @@
 import { OrderBook, OrderBookLevel } from '../domain/market-data/order-book';
-import { MdService } from '../domain/market-data/md.service';
+import { MdServiceBase } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
 import { WebsocketAdapter } from './websocket-adapter';
 import { Candlestick } from '../domain/market-data/candlestick';
 import { RestAdapter } from './rest-adapter';
+import Timeframe from '../domain/core/timeframe';
+import Exchange from '../domain/core/exchange';
 
 type BookTickerEvent = {
   u: number; // Order book updateId
@@ -39,13 +41,13 @@ type KlineEvent = {
   };
 };
 
-export class BinanceMdService extends MdService {
+export class BinanceMdService extends MdServiceBase {
   constructor(
     eventEmitter: EventEmitter,
     private ws: WebsocketAdapter,
     private rest: RestAdapter
   ) {
-    super(eventEmitter);
+    super(new Exchange('binance'), eventEmitter);
 
     this.ws.onOpen(() => {
       this.processOpen();
@@ -109,7 +111,7 @@ export class BinanceMdService extends MdService {
       [parseFloat(payload.a), parseFloat(payload.A)]
     ];
 
-    const orderBook = new OrderBook(symbol, 'binance', bids, asks);
+    const orderBook = new OrderBook(symbol, this.exchange, bids, asks);
     this.emitOrderBook(orderBook);
   }
 
@@ -130,7 +132,7 @@ export class BinanceMdService extends MdService {
       parseFloat(low),
       parseFloat(close),
       parseFloat(volume),
-      'binance',
+      this.exchange,
       symbol.toLowerCase()
     );
     this.emitCandlestick(candlestick);
@@ -138,7 +140,7 @@ export class BinanceMdService extends MdService {
 
   async getCandlestick(
     symbol: string,
-    interval: string,
+    timeframe: Timeframe,
     startTime: Date,
     endTime: Date
   ): Promise<Candlestick[]> {
@@ -146,7 +148,7 @@ export class BinanceMdService extends MdService {
     const endTimeMillis = endTime.getTime();
     const response = await this.rest.get<[]>(`klines`, {
       symbol: symbol.toUpperCase(),
-      interval: interval,
+      timeframe: timeframe,
       startTime: startTimeMillis,
       endTime: endTimeMillis
     });
@@ -162,13 +164,13 @@ export class BinanceMdService extends MdService {
         low,
         close,
         volume,
-        'binance',
+        this.exchange,
         symbol
       );
     });
   }
 
-  subscribeCandlestick(symbol: string, interval: string): void {
+  subscribeCandlestick(symbol: string, timeframe: Timeframe): void {
     const stream = `${symbol.toLowerCase()}@kline_1h`;
     const messageFrame = {
       method: 'SUBSCRIBE',
@@ -179,5 +181,5 @@ export class BinanceMdService extends MdService {
     this.subscriptionManagerCandlestick.subscribe(symbol);
   }
 
-  unsubscribeCandlestick(symbol: string, interval: string): void {}
+  unsubscribeCandlestick(symbol: string, timeframe: Timeframe): void {}
 }

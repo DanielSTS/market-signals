@@ -2,6 +2,7 @@ import EventEmitter from 'events';
 import { BinanceMdService } from '../../src/infra/binance-md-service';
 import { WebsocketAdapter } from '../../src/infra/websocket-adapter';
 import { RestAdapter } from '../../src/infra/rest-adapter';
+import Timeframe from '../../src/domain/core/timeframe';
 
 function makeWsAdapter(): WebsocketAdapter {
   return {
@@ -106,7 +107,7 @@ describe('BinanceMdService', () => {
       'onOrderBook.binance.btcusdt',
       expect.objectContaining({
         symbol: 'btcusdt',
-        exchange: 'binance',
+        exchange: { value: 'binance' },
         bids: [[132736.0, 31.21]],
         asks: [[132737.0, 40.66]]
       })
@@ -136,7 +137,7 @@ describe('BinanceMdService', () => {
 
   it('should fetch candles data', async () => {
     const symbol = 'btcusdt';
-    const interval = '1h';
+    const timeframe = new Timeframe('1h');
     const startTime = new Date('2022-07-18T00:00');
     const endTime = new Date('2022-08-19T12:00');
 
@@ -159,7 +160,7 @@ describe('BinanceMdService', () => {
 
     const candles = await binanceMdService.getCandlestick(
       symbol,
-      interval,
+      timeframe,
       startTime,
       endTime
     );
@@ -172,7 +173,7 @@ describe('BinanceMdService', () => {
         low: 111.0101,
         close: 222.0202,
         volume: 10,
-        exchange: 'binance',
+        exchange: { value: 'binance' },
         symbol
       },
       {
@@ -182,7 +183,7 @@ describe('BinanceMdService', () => {
         low: 112.2112,
         close: 323.3223,
         volume: 20.45,
-        exchange: 'binance',
+        exchange: { value: 'binance' },
         symbol
       },
       {
@@ -192,14 +193,14 @@ describe('BinanceMdService', () => {
         low: 666.4444,
         close: 888.2222,
         volume: 30,
-        exchange: 'binance',
+        exchange: { value: 'binance' },
         symbol
       }
     ]);
 
     expect(restAdapter.get).toHaveBeenCalledWith('klines', {
       symbol: symbol.toUpperCase(),
-      interval: interval,
+      timeframe: timeframe,
       startTime: startTime.getTime(),
       endTime: endTime.getTime()
     });

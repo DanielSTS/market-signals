@@ -2,6 +2,8 @@ import EventEmitter from 'events';
 import { FoxbitMdService } from '../../src/infra/foxbit-md-service';
 import { WebsocketAdapter } from '../../src/infra/websocket-adapter';
 import { RestAdapter } from '../../src/infra/rest-adapter';
+import Timeframe from '../../src/domain/core/timeframe';
+import Exchange from '../../src/domain/core/exchange';
 
 function makeWsAdapter(): WebsocketAdapter {
   return {
@@ -27,6 +29,8 @@ describe('FoxbitMdService', () => {
   let wsAdapter: WebsocketAdapter;
   let restAdapter: RestAdapter;
   let foxbitMdService: FoxbitMdService;
+
+  const exchange = new Exchange('foxbit');
 
   beforeEach(() => {
     eventEmitter = new EventEmitter();
@@ -111,7 +115,7 @@ describe('FoxbitMdService', () => {
       'onOrderBook.foxbit.btcbrl',
       expect.objectContaining({
         symbol: 'btcbrl',
-        exchange: 'foxbit',
+        exchange,
         bids: [[132653, Number.MAX_SAFE_INTEGER]],
         asks: [[132882, Number.MAX_SAFE_INTEGER]]
       })
@@ -141,7 +145,7 @@ describe('FoxbitMdService', () => {
 
   it('should fetch candles data', async () => {
     const symbol = 'btcbrl';
-    const interval = '1h';
+    const timeframe = new Timeframe('1h');
     const startTime = new Date('2022-07-18T00:00');
     const endTime = new Date('2022-08-19T12:00');
 
@@ -164,7 +168,7 @@ describe('FoxbitMdService', () => {
 
     const candles = await foxbitMdService.getCandlestick(
       symbol,
-      interval,
+      timeframe,
       startTime,
       endTime
     );
@@ -177,7 +181,7 @@ describe('FoxbitMdService', () => {
         low: 111.0101,
         close: 222.0202,
         volume: 10,
-        exchange: 'foxbit',
+        exchange,
         symbol
       },
       {
@@ -187,7 +191,7 @@ describe('FoxbitMdService', () => {
         low: 112.2112,
         close: 323.3223,
         volume: 20.45,
-        exchange: 'foxbit',
+        exchange,
         symbol
       },
       {
@@ -197,13 +201,13 @@ describe('FoxbitMdService', () => {
         low: 666.4444,
         close: 888.2222,
         volume: 30,
-        exchange: 'foxbit',
+        exchange,
         symbol
       }
     ]);
 
     expect(restAdapter.get).toHaveBeenCalledWith('markets/btcbrl/candles', {
-      interval: interval,
+      timeframe: timeframe,
       start_time: startTime.toISOString(),
       end_time: endTime.toISOString()
     });

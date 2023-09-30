@@ -1,7 +1,9 @@
+import Exchange from './exchange';
+
 export default class Instrument {
   constructor(
     readonly symbol: string,
-    readonly exchange: string,
+    readonly exchange: Exchange,
     readonly minQuantity: number,
     readonly priceIncrement: number
   ) {

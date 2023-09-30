@@ -21,18 +21,28 @@ export abstract class Strategy {
     return Array.from(this.positions.values());
   }
 
-  openPositions() {
-    return this.getPositions().filter(position => position.state === 'open');
+  openPosition() {
+    return this.getPositions().find(position => position.state === 'open');
   }
 
-  async positionOpened(price: number, time: Date, amount: number, id: string) {
-    const trade = new Trade(price, time, amount);
+  async positionOpened(
+    price: number,
+    time: Date,
+    quantity: number,
+    id: string
+  ) {
+    const trade = new Trade(price, time, quantity);
     const position = new Position(trade, id);
     this.positions.set(id, position);
   }
 
-  async positionClosed(price: number, time: Date, amount: number, id: string) {
-    const trade = new Trade(price, time, amount);
+  async positionClosed(
+    price: number,
+    time: Date,
+    quantity: number,
+    id: string
+  ) {
+    const trade = new Trade(price, time, quantity);
     const position = this.positions.get(id);
     if (position) {
       position.close(trade);

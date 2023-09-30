@@ -1,9 +1,11 @@
 import { OrderBook, OrderBookLevel } from '../domain/market-data/order-book';
-import { MdService } from '../domain/market-data/md.service';
 import EventEmitter from 'events';
 import { WebsocketAdapter } from './websocket-adapter';
 import { RestAdapter } from './rest-adapter';
 import { Candlestick } from '../domain/market-data/candlestick';
+import { MdServiceBase } from '../domain/market-data/md.service';
+import Exchange from '../domain/core/exchange';
+import Timeframe from '../domain/core/timeframe';
 
 type MessageFrame = {
   m: number;
@@ -26,13 +28,13 @@ type TickerDataUpdateEvent = [
   close: string,
   volume: string
 ];
-export class FoxbitMdService extends MdService {
+export class FoxbitMdService extends MdServiceBase {
   constructor(
     eventEmitter: EventEmitter,
     private ws: WebsocketAdapter,
     private rest: RestAdapter
   ) {
-    super(eventEmitter);
+    super(new Exchange('foxbit'), eventEmitter);
 
     this.ws.onOpen(() => {
       this.processOpen();
@@ -108,7 +110,12 @@ export class FoxbitMdService extends MdService {
     const asks: OrderBookLevel[] = [
       [payload.BestOffer, Number.MAX_SAFE_INTEGER]
     ];
-    const orderBook = new OrderBook(payload.MarketId, 'foxbit', bids, asks);
+    const orderBook = new OrderBook(
+      payload.MarketId,
+      this.exchange,
+      bids,
+      asks
+    );
     this.emitOrderBook(orderBook);
   }
 
@@ -125,7 +132,7 @@ export class FoxbitMdService extends MdService {
         low,
         close,
         volume,
-        'foxbit',
+        this.exchange,
         'btcbrl'
       );
     });
@@ -135,12 +142,12 @@ export class FoxbitMdService extends MdService {
 
   async getCandlestick(
     symbol: string,
-    interval: string,
+    timeframe: Timeframe,
     startTime: Date,
     endTime: Date
   ): Promise<Candlestick[]> {
     const data = await this.rest.get<[]>(`markets/${symbol}/candles`, {
-      interval: interval,
+      timeframe: timeframe,
       start_time: startTime.toISOString(),
       end_time: endTime.toISOString()
     });
@@ -156,16 +163,16 @@ export class FoxbitMdService extends MdService {
         low,
         close,
         volume,
-        'foxbit',
+        this.exchange,
         symbol
       );
     });
   }
 
-  subscribeCandlestick(symbol: string, interval: string): void {
+  subscribeCandlestick(symbol: string, timeframe: Timeframe): void {
     const payload = JSON.stringify({
       MarketId: symbol,
-      Interval: 60
+      timeframe: 60
     });
     const messageFrame: MessageFrame = {
       m: 2,
@@ -177,13 +184,13 @@ export class FoxbitMdService extends MdService {
     this.subscriptionManagerCandlestick.subscribe(symbol);
   }
 
-  unsubscribeCandlestick(symbol: string, interval: string): void {
+  unsubscribeCandlestick(symbol: string, timeframe: Timeframe): void {
     if (!this.subscriptionManagerCandlestick.hasSubscriptions(symbol)) {
       return;
     }
     const payload = JSON.stringify({
       MarketId: symbol,
-      Interval: 60
+      timeframe: 60
     });
     const messageFrame: MessageFrame = {
       m: 2,

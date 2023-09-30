@@ -1,16 +1,18 @@
 import { Trade } from './trade';
 
 export class Position {
-  state: string;
+  private state = 'open';
   readonly enterTrade: Trade;
   exitTrade?: Trade;
   readonly id: string;
   constructor(enterTrade: Trade, id: string) {
-    this.state = 'open';
     this.enterTrade = enterTrade;
     this.id = id;
   }
 
+  getState(): string {
+    return this.state;
+  }
   close(exitTrade: Trade) {
     this.state = 'closed';
     this.exitTrade = exitTrade;
