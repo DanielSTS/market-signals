@@ -2,89 +2,39 @@ import EventEmitter from 'events';
 import WsAdapter from './infra/ws-adapter';
 import AxiosAdapter from './infra/axios-adapter';
 import FoxbitMdService from './application/exchange/foxbit-md-service';
+import { BullQueue } from './infra/bull-queue';
+import CreateBacktest from './application/use-case/create-backtest';
+import InMemoryInstrumentRepository from './infra/instrument-repository-in-memory';
+import InMemoryBacktestRepository from './infra/backtest-repository-in-memory';
 
 async function main() {
   const eventEmitter = new EventEmitter();
-  eventEmitter.on('arbitrageSignal', data => {
-    console.log(data);
-  });
-
-  /*  eventEmitter.on('onCandlestick.foxbit.btcbrl', data => {
-    console.log(data);
-  });
-
-  eventEmitter.on('onCandlestick.binance.btcbrl', data => {
-    console.log(data);
-  });*/
 
   const wsFoxbit = new WsAdapter('wss://api.foxbit.com.br/');
   const restFoxbit = new AxiosAdapter('https://api.foxbit.com.br/rest/v3/');
   const mdFoxbit = new FoxbitMdService(eventEmitter, wsFoxbit, restFoxbit);
+  const instrumentRepository = new InMemoryInstrumentRepository();
+  const backtestRepository = new InMemoryBacktestRepository();
 
-  /*  mdFoxbit.subscribeCandlestick(
-     'btcbrl',
-     '1h',
-     new Date('2022-07-18T00:00'),
-     new Date('2022-08-19T12:00')
-   );*/
+  const bullQueue = new BullQueue();
+  const createBacktest = new CreateBacktest(
+    instrumentRepository,
+    backtestRepository,
+    mdFoxbit,
+    bullQueue
+  );
 
-  /*  console.log(
-    await mdFoxbit.getCandlestick(
-      'btcbrl',
-      '1h',
-      new Date('2022-07-18T00:00'),
-      new Date('2022-08-19T12:00')
-    )
-  );*/
+  const backtestId = await createBacktest.execute({
+    exchange: 'foxbit',
+    symbol: 'btcbrl',
+    timeframe: '1h',
+    startTime: new Date('2022-07-18T00:00'),
+    endTime: new Date('2022-08-19T12:00'),
+    strategyType: 'bb',
+    strategyParams: {}
+  });
 
-  /*  const wsBinance = new WsAdapter('wss://stream.binance.com:9443/ws');
-  const restBinance = new AxiosAdapter('https://api.binance.com/api/v3/');
-  const mdBinance = new BinanceMdService(eventEmitter, wsBinance, restBinance);*/
-
-  // const bt = new Backtest(
-  //   new Date('2022-07-18T00:00'),
-  //   new Date('2022-08-20T12:00'),
-  //   mdFoxbit,
-  //   '1h',
-  //   'btcbrl',
-  //   'bb',
-  //   {}
-  // );
-  /*
-  bt.start();
- 
-   mdBinance.subscribeCandlestick('btcbrl', '1h');
-   console.log(
-    await mdBinance.getCandlestick(
-      'btcbrl',
-      '1h',
-      new Date('2022-07-18T00:00'),
-      new Date('2022-08-19T12:00')
-    )
-  );*/
-
-  /*  const symbols = [
-     'btcbrl',
-     'usdtbrl',
-     'ethbrl',
-     'bnbbrl',
-     'dogebrl',
-     'ltcbrl'
-   ];
-
-   symbols.forEach(symbol => {
-     const params: ArbitrageParams = {
-       symbolA: symbol,
-       exchangeA: 'foxbit',
-       symbolB: symbol,
-       exchangeB: 'binance',
-       spread: 0.1
-     };
-
-     mdFoxbit.subscribe(symbol);
-     mdBinance.subscribe(symbol);
-     new Arbitrage(eventEmitter, params);
-   });*/
+  console.log('Backtest criado e trabalho adicionado com sucesso!');
 }
 
-void main();
+main();

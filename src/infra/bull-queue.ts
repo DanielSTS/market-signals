@@ -3,7 +3,7 @@ import * as jobs from '../application/job';
 
 const redisConfig = {
   host: 'localhost',
-  port: 3333
+  port: 6379
 };
 
 export class BullQueue {
@@ -21,18 +21,14 @@ export class BullQueue {
     }));
   }
 
-   async add(
-    name: string,
-    data: any,
-    opts?: Bull.JobOptions
-  ): Promise<void> {
+  async add(name: string, data: any, opts?: Bull.JobOptions): Promise<void> {
     const queue = this.queues.find(q => q.name === name);
     if (queue) {
       await queue.bull.add(data, opts);
     }
   }
 
-   process(): void {
+  process(): void {
     this.queues.forEach(queue => {
       queue.bull.process(queue.handle);
       queue.bull.on('failed', (job, err) => {

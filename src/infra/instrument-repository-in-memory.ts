@@ -4,11 +4,15 @@ import InstrumentRepository from '../domain/repository/instrument-repository';
 export default class InMemoryInstrumentRepository
   implements InstrumentRepository
 {
-  private instruments: Instrument[] = [];
+  private instruments: Instrument[] = [
+    {
+      exchange: { value: 'foxbit' },
+      symbol: 'btcbrl',
+      minQuantity: 1,
+      priceIncrement: 0.01
+    }
+  ];
 
-  constructor() {
-    this.instruments = [];
-  }
   async getBySymbolAndExchange(
     symbol: string,
     exchange: string
