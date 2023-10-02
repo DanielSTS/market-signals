@@ -3,6 +3,7 @@ import Backtest from '../../domain/runner/backtest';
 import Timeframe from '../../domain/core/timeframe';
 import Instrument from '../../domain/core/instrument';
 import { MdService } from '../../domain/market-data/md.service';
+import BacktestRepository from '../../domain/repository/backtest-repository';
 
 export type BacktestJob = {
   id: string;
@@ -17,7 +18,10 @@ export type BacktestJob = {
 export default class ExecuteBacktest {
   static readonly key = 'ExecuteBacktest';
 
-  constructor(private readonly mdService: MdService) {}
+  constructor(
+    private readonly mdService: MdService,
+    private readonly backtestRepository: BacktestRepository
+  ) {}
 
   async handle(job: Job<BacktestJob>) {
     const data = job.data;
@@ -31,8 +35,7 @@ export default class ExecuteBacktest {
       data.strategyType,
       data.strategyParams
     );
-    console.log('Job executing...');
     await backtest.start();
-    console.log('Job executed!');
+    await this.backtestRepository.save(backtest);
   }
 }

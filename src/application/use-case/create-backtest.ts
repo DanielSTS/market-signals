@@ -6,7 +6,7 @@ import { MdService } from '../../domain/market-data/md.service';
 import Backtest from '../../domain/runner/backtest';
 import crypto from 'crypto';
 import { BacktestJob } from '../job/execute-backtest';
-import QueueAdapter from '../../infra/queue-adapter';
+import QueueAdapter from '../../infra/queue/queue-adapter';
 
 export default class CreateBacktest {
   constructor(
@@ -22,9 +22,6 @@ export default class CreateBacktest {
       input.symbol,
       exchange.value
     );
-    if (!instrument) {
-      throw new Error('Instrument not found.');
-    }
     const id = crypto.randomUUID().toString();
     const backtest = new Backtest(
       id,

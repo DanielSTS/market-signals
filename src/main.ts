@@ -1,12 +1,12 @@
 import EventEmitter from 'events';
-import WsAdapter from './infra/ws-adapter';
-import AxiosAdapter from './infra/axios-adapter';
+import WsAdapter from './infra/web/ws-adapter';
+import AxiosAdapter from './infra/web/axios-adapter';
 import FoxbitMdService from './application/exchange/foxbit-md-service';
 import CreateBacktest from './application/use-case/create-backtest';
-import InMemoryInstrumentRepository from './infra/instrument-repository-in-memory';
-import InMemoryBacktestRepository from './infra/backtest-repository-in-memory';
+import InMemoryInstrumentRepository from './infra/database/instrument-repository-in-memory';
+import InMemoryBacktestRepository from './infra/database/backtest-repository-in-memory';
 import ExecuteBacktest from './application/job/execute-backtest';
-import { BullMQAdapter } from './infra/bullmq-adapter';
+import { BullMQAdapter } from './infra/queue/bullmq-adapter';
 import 'dotenv/config';
 
 async function main() {

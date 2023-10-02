@@ -1,5 +1,5 @@
-import Instrument from '../domain/core/instrument';
-import InstrumentRepository from '../domain/repository/instrument-repository';
+import Instrument from '../../domain/core/instrument';
+import InstrumentRepository from '../../domain/repository/instrument-repository';
 
 export default class InMemoryInstrumentRepository
   implements InstrumentRepository
@@ -22,10 +22,14 @@ export default class InMemoryInstrumentRepository
   async getBySymbolAndExchange(
     symbol: string,
     exchange: string
-  ): Promise<Instrument | undefined> {
-    return this.instruments.find(
+  ): Promise<Instrument> {
+    const instrument = this.instruments.find(
       instrument =>
         instrument.symbol === symbol && instrument.exchange.value === exchange
     );
+    if (instrument) {
+      return instrument;
+    }
+    throw new Error('Instrument not found');
   }
 }

@@ -9,6 +9,7 @@ type BacktestState = 'WAITING' | 'RUNNING' | 'EXECUTED' | 'FAILED';
 
 export default class Backtest extends Runner {
   private state: BacktestState = 'WAITING';
+  private positions: Position[] = [];
   constructor(
     readonly id: string,
     readonly startTime: Date,
@@ -44,6 +45,7 @@ export default class Backtest extends Runner {
 
       this.printPositions();
       this.printProfit();
+      this.positions = this.strategy.getPositions();
       this.state = 'EXECUTED';
     } catch (error) {
       this.state = 'FAILED';

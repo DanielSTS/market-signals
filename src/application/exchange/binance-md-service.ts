@@ -1,9 +1,9 @@
 import OrderBook, { OrderBookLevel } from '../../domain/market-data/order-book';
 import MdServiceBase from '../../domain/market-data/md.service';
 import EventEmitter from 'events';
-import WebsocketAdapter from '../../infra/websocket-adapter';
+import WebsocketAdapter from '../../infra/web/websocket-adapter';
 import Candlestick from '../../domain/market-data/candlestick';
-import RestAdapter from '../../infra/rest-adapter';
+import RestAdapter from '../../infra/web/rest-adapter';
 import Timeframe from '../../domain/core/timeframe';
 import Exchange from '../../domain/core/exchange';
 

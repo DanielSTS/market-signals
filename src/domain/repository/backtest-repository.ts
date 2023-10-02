@@ -2,5 +2,5 @@ import Backtest from '../runner/backtest';
 
 export default interface BacktestRepository {
   save(backtest: Backtest): Promise<void>;
-  getById(id: string): Promise<Backtest | undefined>;
+  getById(id: string): Promise<Backtest>;
 }
