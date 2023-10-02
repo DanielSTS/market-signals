@@ -43,7 +43,9 @@ export default class CandlestickManager {
         this.historicalCandles = [...candlesticks];
         this.notifySubscribers(this.historicalCandles);
       })
-      .then(() => this.mdService.subscribeCandlestick('btcbrl', '1h'))
+      .then(() =>
+        this.mdService.subscribeCandlestick('btcbrl', { value: '1h' })
+      )
       .then(() => {
         this.eventEmitter.on(
           'onCandlestick.binance.btcbrl',

@@ -5,7 +5,10 @@ import Timeframe from '../core/timeframe';
 import Instrument from '../core/instrument';
 import Position from '../oms/position';
 
+type BacktestState = 'WAITING' | 'RUNNING' | 'EXECUTED' | 'FAILED';
+
 export default class Backtest extends Runner {
+  private state: BacktestState = 'WAITING';
   constructor(
     readonly id: string,
     readonly startTime: Date,
@@ -18,8 +21,13 @@ export default class Backtest extends Runner {
   ) {
     super(timeframe, instrument, strategyType, strategyParams);
   }
+
+  get State(): BacktestState {
+    return this.state;
+  }
   async start() {
     try {
+      this.state = 'RUNNING';
       const history = await this.mdService.getCandlestick(
         this.instrument.symbol,
         this.timeframe,
@@ -36,7 +44,9 @@ export default class Backtest extends Runner {
 
       this.printPositions();
       this.printProfit();
+      this.state = 'EXECUTED';
     } catch (error) {
+      this.state = 'FAILED';
       console.log(error);
     }
   }
