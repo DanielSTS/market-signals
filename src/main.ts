@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import CreateBacktest from './application/use-case/create-backtest';
 import InMemoryInstrumentRepository from './infra/database/instrument-repository-in-memory';
-import ExecuteBacktest from './application/job/execute-backtest';
+import ExecuteBacktest from './application/handler/execute-backtest';
 import { BullMQAdapter } from './infra/queue/bullmq-adapter';
 import 'dotenv/config';
 import BacktestRepositoryMongoDb from './infra/database/backtest-repository-mongodb';
@@ -20,7 +20,7 @@ async function main() {
     db,
     mdServiceFactory
   );
-  const bullQueue = new BullMQAdapter(ExecuteBacktest.key);
+  const bullQueue = new BullMQAdapter('ExecuteBacktest');
   const createBacktest = new CreateBacktest(
     instrumentRepository,
     backtestRepository,

@@ -1,3 +1,5 @@
+export type JobName = 'ExecuteBacktest';
+
 export default interface QueueAdapter {
-  add(jobName: string, data: any): Promise<void>;
+  add(jobName: JobName, data: any): Promise<void>;
 }

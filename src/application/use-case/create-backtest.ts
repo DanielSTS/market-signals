@@ -4,7 +4,7 @@ import InstrumentRepository from '../../domain/repository/instrument-repository'
 import Timeframe from '../../domain/core/timeframe';
 import Backtest from '../../domain/runner/backtest';
 import crypto from 'crypto';
-import { BacktestJob } from '../job/execute-backtest';
+import { BacktestJob } from '../handler/execute-backtest';
 import QueueAdapter from '../../infra/queue/queue-adapter';
 import { ExchangeFactory } from '../exchange/exchange-factory';
 

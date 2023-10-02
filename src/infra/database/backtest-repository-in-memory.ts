@@ -8,6 +8,13 @@ export default class InMemoryBacktestRepository implements BacktestRepository {
     this.backtests.push(backtest);
   }
 
+  async update(backtest: Backtest): Promise<void> {
+    const index = this.backtests.findIndex(
+      backtest => backtest.id === backtest.id
+    );
+    this.backtests[index] = backtest;
+  }
+
   async getById(id: string): Promise<Backtest> {
     const backtest = this.backtests.find(backtest => backtest.id === id);
     if (backtest) {

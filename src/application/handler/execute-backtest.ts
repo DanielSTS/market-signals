@@ -4,6 +4,7 @@ import Timeframe from '../../domain/core/timeframe';
 import Instrument from '../../domain/core/instrument';
 import BacktestRepository from '../../domain/repository/backtest-repository';
 import { ExchangeFactory } from '../exchange/exchange-factory';
+import Handler from './handler';
 
 export type BacktestJob = {
   id: string;
@@ -15,8 +16,8 @@ export type BacktestJob = {
   strategyParams: any;
 };
 
-export default class ExecuteBacktest {
-  static readonly key = 'ExecuteBacktest';
+export default class ExecuteBacktest implements Handler {
+  readonly key = 'ExecuteBacktest';
 
   constructor(
     private readonly exchangeFactory: ExchangeFactory,
