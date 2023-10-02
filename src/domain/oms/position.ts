@@ -1,6 +1,6 @@
 import Trade from './trade';
 
-type PositionState = 'OPEN' | 'CLOSED';
+export type PositionState = 'OPEN' | 'CLOSED';
 
 export default class Position {
   private _state: PositionState = 'OPEN';

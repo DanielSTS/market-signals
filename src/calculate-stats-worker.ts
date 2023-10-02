@@ -1,15 +1,14 @@
 import EventEmitter from 'events';
 import { Job, Worker } from 'bullmq';
-import ExecuteBacktest, {
-  BacktestJob
-} from './application/handler/execute-backtest';
 import 'dotenv/config';
 import redisConfig from './infra/queue/redis-config';
 import MdServiceFactory from './application/exchange/exchange-factory';
 import BacktestRepositoryMongoDb from './infra/database/backtest-repository-mongodb';
 import { MongoClient } from 'mongodb';
 import mongodbConfig from './infra/database/mongodb-config';
-import { BullMQAdapter } from './infra/queue/bullmq-adapter';
+import CalculateStats, {
+  CalculateStatsJob
+} from './application/handler/calculate-stats';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -22,14 +21,12 @@ async function main() {
     db,
     mdServiceFactory
   );
-
-  const bullQueue = new BullMQAdapter('CalculateStats');
-  const executeBacktest = new ExecuteBacktest(backtestRepository, bullQueue);
+  const calculateStats = new CalculateStats(backtestRepository);
 
   new Worker(
-    executeBacktest.key,
-    async (job: Job<BacktestJob>) => {
-      await executeBacktest.handle(job.data);
+    calculateStats.key,
+    async (job: Job<CalculateStatsJob>) => {
+      await calculateStats.handle(job.data);
     },
     {
       connection: redisConfig

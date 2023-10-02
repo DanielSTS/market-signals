@@ -5,7 +5,7 @@ import Timeframe from '../core/timeframe';
 import Instrument from '../core/instrument';
 import Position from '../oms/position';
 
-type BacktestState = 'WAITING' | 'RUNNING' | 'EXECUTED' | 'FAILED';
+export type BacktestState = 'WAITING' | 'RUNNING' | 'EXECUTED' | 'FAILED';
 
 export default class Backtest extends Runner {
   private _state: BacktestState;

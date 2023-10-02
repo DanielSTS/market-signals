@@ -5,8 +5,11 @@ import Timeframe from '../../domain/core/timeframe';
 import Instrument from '../../domain/core/instrument';
 import Exchange from '../../domain/core/exchange';
 import MdServiceFactory from '../../application/exchange/exchange-factory';
+import BacktestDao, { BacktestDto } from '../../application/dao/backtest-dao';
 
-export default class BacktestRepositoryMongoDb implements BacktestRepository {
+export default class BacktestRepositoryMongoDb
+  implements BacktestRepository, BacktestDao
+{
   private readonly collection: Collection;
 
   constructor(
@@ -73,6 +76,44 @@ export default class BacktestRepositoryMongoDb implements BacktestRepository {
         backtest.strategyParams,
         backtest.state
       );
+    } catch (error) {
+      throw new Error(`Error getting backtest from MongoDB: ${error}`);
+    }
+  }
+
+  async getDtoById(id: string): Promise<BacktestDto> {
+    try {
+      const backtest = await this.collection.findOne({ id: id });
+      if (!backtest) {
+        throw new Error('Backtest not found');
+      }
+      return {
+        id: backtest.id,
+        startTime: backtest.startTime,
+        endTime: backtest.endTime,
+        symbol: backtest.symbol,
+        exchange: backtest.exchange,
+        timeframe: backtest.timeframe,
+        strategyType: backtest.strategyType,
+        strategyParams: backtest.strategyParams,
+        state: backtest.startTime,
+        positions: backtest.positions.map((p: any) => {
+          return {
+            state: p._state,
+            enterTrade: {
+              price: p.enterTrade.price,
+              time: p.enterTrade.time,
+              quantity: p.enterTrade.quantity
+            },
+            id: p.id,
+            exitTrade: {
+              price: p.exitTrade.price,
+              time: p.exitTrade.time,
+              quantity: p.exitTrade.quantity
+            }
+          };
+        })
+      };
     } catch (error) {
       throw new Error(`Error getting backtest from MongoDB: ${error}`);
     }

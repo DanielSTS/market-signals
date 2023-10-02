@@ -1,6 +1,7 @@
 import { Queue } from 'bullmq';
-import QueueAdapter, { JobName } from './queue-adapter';
+import QueueAdapter from './queue-adapter';
 import redisConfig from './redis-config';
+import { JobName } from '../../application/handler/handler';
 
 export class BullMQAdapter implements QueueAdapter {
   private bullQueue: Queue;

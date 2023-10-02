@@ -1,4 +1,4 @@
-import { JobName } from '../../infra/queue/queue-adapter';
+export type JobName = 'ExecuteBacktest' | 'CalculateStats';
 
 export default interface Handler {
   readonly key: JobName;
