@@ -5,8 +5,9 @@ import FoxbitMdService from './application/exchange/foxbit-md-service';
 import CreateBacktest from './application/use-case/create-backtest';
 import InMemoryInstrumentRepository from './infra/instrument-repository-in-memory';
 import InMemoryBacktestRepository from './infra/backtest-repository-in-memory';
-import { Queue, Worker } from 'bullmq';
+import { Worker } from 'bullmq';
 import { ExecuteBacktest } from './application/job';
+import { BullMQAdapter } from './infra/bullmq-adapter';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -19,12 +20,8 @@ async function main() {
 
   const executeBacktest = new ExecuteBacktest(mdFoxbit);
 
-  new Worker(
-    ExecuteBacktest.key,
-    executeBacktest.handle.bind(executeBacktest),
-    {}
-  );
-  const bullQueue = new Queue(ExecuteBacktest.key);
+  new Worker(ExecuteBacktest.key, executeBacktest.handle.bind(executeBacktest));
+  const bullQueue = new BullMQAdapter(ExecuteBacktest.key);
 
   const createBacktest = new CreateBacktest(
     instrumentRepository,

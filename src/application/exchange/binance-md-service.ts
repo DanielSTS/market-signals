@@ -148,7 +148,7 @@ export default class BinanceMdService extends MdServiceBase {
     const endTimeMillis = endTime.getTime();
     const response = await this.rest.get<[]>(`klines`, {
       symbol: symbol.toUpperCase(),
-      timeframe: timeframe,
+      interval: timeframe.value,
       startTime: startTimeMillis,
       endTime: endTimeMillis
     });

@@ -3,7 +3,11 @@ import InstrumentRepository from '../../src/domain/repository/instrument-reposit
 import { MdService } from '../../src/domain/market-data/md.service';
 import InMemoryBacktestRepository from '../../src/infra/backtest-repository-in-memory';
 import InMemoryInstrumentRepository from '../../src/infra/instrument-repository-in-memory';
+import QueueAdapter from '../../src/infra/queue-adapter';
+
 import createBacktest from '../../src/application/use-case/create-backtest';
+import { ExecuteBacktest } from '../../src/application/job';
+import { BullMQAdapter } from '../../src/infra/bullmq-adapter';
 
 function makeMdService(): MdService {
   return {
@@ -19,11 +23,17 @@ describe('createBacktest', () => {
   let instrumentRepository: InstrumentRepository;
   let backtestRepository: BacktestRepository;
   let mdService: MdService;
+  let bullQueue: QueueAdapter;
 
   beforeEach(() => {
     instrumentRepository = new InMemoryInstrumentRepository();
     backtestRepository = new InMemoryBacktestRepository();
     mdService = makeMdService();
+    bullQueue = new BullMQAdapter(ExecuteBacktest.key);
+  });
+
+  afterEach(() => {
+    bullQueue.close();
   });
 
   it('should create a new backtest and save it in the repository', async () => {
@@ -43,7 +53,8 @@ describe('createBacktest', () => {
     const useCase = new createBacktest(
       instrumentRepository,
       backtestRepository,
-      mdService
+      mdService,
+      bullQueue
     );
 
     const id = await useCase.execute(input);

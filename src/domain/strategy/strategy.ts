@@ -22,7 +22,7 @@ export default abstract class Strategy {
   }
 
   openPosition() {
-    return this.getPositions().find(position => position.state === 'open');
+    return this.getPositions().find(position => position.getState() === 'open');
   }
 
   async positionOpened(

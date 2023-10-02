@@ -28,6 +28,7 @@ describe('BinanceMdService', () => {
   let wsAdapter: WebsocketAdapter;
   let restAdapter: RestAdapter;
   let binanceMdService: BinanceMdService;
+  const exchange = { value: 'binance' };
 
   beforeEach(() => {
     eventEmitter = new EventEmitter();
@@ -107,7 +108,7 @@ describe('BinanceMdService', () => {
       'onOrderBook.binance.btcusdt',
       expect.objectContaining({
         symbol: 'btcusdt',
-        exchange: { value: 'binance' },
+        exchange,
         bids: [[132736.0, 31.21]],
         asks: [[132737.0, 40.66]]
       })
@@ -173,7 +174,7 @@ describe('BinanceMdService', () => {
         low: 111.0101,
         close: 222.0202,
         volume: 10,
-        exchange: { value: 'binance' },
+        exchange,
         symbol
       },
       {
@@ -183,7 +184,7 @@ describe('BinanceMdService', () => {
         low: 112.2112,
         close: 323.3223,
         volume: 20.45,
-        exchange: { value: 'binance' },
+        exchange,
         symbol
       },
       {
@@ -193,14 +194,14 @@ describe('BinanceMdService', () => {
         low: 666.4444,
         close: 888.2222,
         volume: 30,
-        exchange: { value: 'binance' },
+        exchange,
         symbol
       }
     ]);
 
     expect(restAdapter.get).toHaveBeenCalledWith('klines', {
       symbol: symbol.toUpperCase(),
-      timeframe: timeframe,
+      interval: timeframe.value,
       startTime: startTime.getTime(),
       endTime: endTime.getTime()
     });

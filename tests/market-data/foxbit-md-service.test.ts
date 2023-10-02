@@ -207,7 +207,7 @@ describe('FoxbitMdService', () => {
     ]);
 
     expect(restAdapter.get).toHaveBeenCalledWith('markets/btcbrl/candles', {
-      timeframe: timeframe,
+      interval: timeframe.value,
       start_time: startTime.toISOString(),
       end_time: endTime.toISOString()
     });
