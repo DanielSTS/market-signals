@@ -11,8 +11,4 @@ export class BullMQAdapter implements QueueAdapter {
   async add(jobName: string, data: any): Promise<void> {
     await this.bullQueue.add(jobName, data);
   }
-
-  close(): void {
-    this.bullQueue.close();
-  }
 }

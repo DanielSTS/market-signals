@@ -3,11 +3,8 @@ import InstrumentRepository from '../../src/domain/repository/instrument-reposit
 import { MdService } from '../../src/domain/market-data/md.service';
 import InMemoryBacktestRepository from '../../src/infra/backtest-repository-in-memory';
 import InMemoryInstrumentRepository from '../../src/infra/instrument-repository-in-memory';
-import QueueAdapter from '../../src/infra/queue-adapter';
-
 import createBacktest from '../../src/application/use-case/create-backtest';
-import { ExecuteBacktest } from '../../src/application/job';
-import { BullMQAdapter } from '../../src/infra/bullmq-adapter';
+import QueueAdapter from '../../src/infra/queue-adapter';
 
 function makeMdService(): MdService {
   return {
@@ -19,21 +16,23 @@ function makeMdService(): MdService {
   };
 }
 
+function makeQueueAdapter(): QueueAdapter {
+  return {
+    add: jest.fn()
+  };
+}
+
 describe('createBacktest', () => {
   let instrumentRepository: InstrumentRepository;
   let backtestRepository: BacktestRepository;
   let mdService: MdService;
-  let bullQueue: QueueAdapter;
+  let queue: QueueAdapter;
 
   beforeEach(() => {
     instrumentRepository = new InMemoryInstrumentRepository();
     backtestRepository = new InMemoryBacktestRepository();
     mdService = makeMdService();
-    bullQueue = new BullMQAdapter(ExecuteBacktest.key);
-  });
-
-  afterEach(() => {
-    bullQueue.close();
+    queue = makeQueueAdapter();
   });
 
   it('should create a new backtest and save it in the repository', async () => {
@@ -50,16 +49,32 @@ describe('createBacktest', () => {
       }
     };
 
+    const addToQueueSpy = jest.spyOn(queue, 'add');
+
     const useCase = new createBacktest(
       instrumentRepository,
       backtestRepository,
       mdService,
-      bullQueue
+      queue
     );
 
     const id = await useCase.execute(input);
     const backtest = await backtestRepository.getById(id);
 
     expect(backtest).toBeDefined();
+    expect(addToQueueSpy).toHaveBeenCalledWith('ExecuteBacktest', {
+      id,
+      instrument: {
+        exchange: { value: input.exchange },
+        minQuantity: 1,
+        priceIncrement: 0.01,
+        symbol: 'btcbrl'
+      },
+      timeframe: { value: input.timeframe },
+      startTime: input.startTime,
+      endTime: input.endTime,
+      strategyType: input.strategyType,
+      strategyParams: input.strategyParams
+    });
   });
 });
