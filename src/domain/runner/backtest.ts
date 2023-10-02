@@ -8,8 +8,8 @@ import Position from '../oms/position';
 export default class Backtest extends Runner {
   constructor(
     readonly id: string,
-    private readonly startTime: Date,
-    private readonly endTime: Date,
+    readonly startTime: Date,
+    readonly endTime: Date,
     private readonly mdService: MdService,
     timeframe: Timeframe,
     instrument: Instrument,

@@ -2,10 +2,11 @@ import EventEmitter from 'events';
 import WsAdapter from './infra/ws-adapter';
 import AxiosAdapter from './infra/axios-adapter';
 import FoxbitMdService from './application/exchange/foxbit-md-service';
-import { BullQueue } from './infra/bull-queue';
 import CreateBacktest from './application/use-case/create-backtest';
 import InMemoryInstrumentRepository from './infra/instrument-repository-in-memory';
 import InMemoryBacktestRepository from './infra/backtest-repository-in-memory';
+import { Queue, Worker } from 'bullmq';
+import { ExecuteBacktest } from './application/job';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -16,7 +17,15 @@ async function main() {
   const instrumentRepository = new InMemoryInstrumentRepository();
   const backtestRepository = new InMemoryBacktestRepository();
 
-  const bullQueue = new BullQueue();
+  const executeBacktest = new ExecuteBacktest(mdFoxbit);
+
+  new Worker(
+    ExecuteBacktest.key,
+    executeBacktest.handle.bind(executeBacktest),
+    {}
+  );
+  const bullQueue = new Queue(ExecuteBacktest.key);
+
   const createBacktest = new CreateBacktest(
     instrumentRepository,
     backtestRepository,
@@ -24,7 +33,7 @@ async function main() {
     bullQueue
   );
 
-  const backtestId = await createBacktest.execute({
+  await createBacktest.execute({
     exchange: 'foxbit',
     symbol: 'btcbrl',
     timeframe: '1h',
@@ -34,7 +43,7 @@ async function main() {
     strategyParams: {}
   });
 
-  console.log('Backtest criado e trabalho adicionado com sucesso!');
+  console.log('Backtest created and work added successfully!');
 }
 
 main();

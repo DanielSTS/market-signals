@@ -147,7 +147,7 @@ export default class FoxbitMdService extends MdServiceBase {
     endTime: Date
   ): Promise<Candlestick[]> {
     const data = await this.rest.get<[]>(`markets/${symbol}/candles`, {
-      timeframe: timeframe,
+      interval: timeframe.value,
       start_time: startTime.toISOString(),
       end_time: endTime.toISOString()
     });

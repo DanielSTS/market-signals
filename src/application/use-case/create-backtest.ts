@@ -5,14 +5,15 @@ import Timeframe from '../../domain/core/timeframe';
 import { MdService } from '../../domain/market-data/md.service';
 import Backtest from '../../domain/runner/backtest';
 import crypto from 'crypto';
-import { BullQueue } from '../../infra/bull-queue';
+import { Queue } from 'bullmq';
+import { BacktestJob } from '../job/execute-backtest';
 
 export default class CreateBacktest {
   constructor(
     private readonly instrumentRepository: InstrumentRepository,
     private readonly backtestRepository: BacktestRepository,
     private readonly mdService: MdService,
-    private readonly bullQueue: BullQueue
+    private readonly bullQueue: Queue
   ) {}
   async execute(input: Input): Promise<string> {
     const exchange = new Exchange(input.exchange);
@@ -36,7 +37,16 @@ export default class CreateBacktest {
       input.strategyParams
     );
     await this.backtestRepository.save(backtest);
-    await this.bullQueue.add('ExecuteBacktest', backtest, {
+    const backtestJobDto: BacktestJob = {
+      id,
+      startTime: backtest.startTime,
+      endTime: backtest.endTime,
+      timeframe: backtest.timeframe,
+      instrument: backtest.instrument,
+      strategyType: backtest.strategyType,
+      strategyParams: backtest.strategyParams
+    };
+    await this.bullQueue.add('ExecuteBacktest', backtestJobDto, {
       attempts: 3,
       priority: 1,
       delay: 1000
