@@ -3,7 +3,7 @@ import Trade from './trade';
 type PositionState = 'OPEN' | 'CLOSED';
 
 export default class Position {
-  private state: PositionState = 'OPEN';
+  private _state: PositionState = 'OPEN';
   readonly enterTrade: Trade;
   exitTrade?: Trade;
   readonly id: string;
@@ -12,11 +12,11 @@ export default class Position {
     this.id = id;
   }
 
-  get State(): PositionState {
-    return this.state;
+  get state(): PositionState {
+    return this._state;
   }
   close(exitTrade: Trade) {
-    this.state = 'CLOSED';
+    this._state = 'CLOSED';
     this.exitTrade = exitTrade;
   }
 
@@ -27,7 +27,7 @@ export default class Position {
       : '';
 
     let profit = '';
-    if (this.state === 'CLOSED') {
+    if (this._state === 'CLOSED') {
       profit = `Profit: ${this.profitString()}`;
     }
 

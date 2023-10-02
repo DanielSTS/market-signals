@@ -2,8 +2,8 @@ import { Job } from 'bullmq';
 import Backtest from '../../domain/runner/backtest';
 import Timeframe from '../../domain/core/timeframe';
 import Instrument from '../../domain/core/instrument';
-import { MdService } from '../../domain/market-data/md.service';
 import BacktestRepository from '../../domain/repository/backtest-repository';
+import { ExchangeFactory } from '../exchange/exchange-factory';
 
 export type BacktestJob = {
   id: string;
@@ -19,7 +19,7 @@ export default class ExecuteBacktest {
   static readonly key = 'ExecuteBacktest';
 
   constructor(
-    private readonly mdService: MdService,
+    private readonly exchangeFactory: ExchangeFactory,
     private readonly backtestRepository: BacktestRepository
   ) {}
 
@@ -29,13 +29,13 @@ export default class ExecuteBacktest {
       data.id,
       new Date(data.startTime),
       new Date(data.endTime),
-      this.mdService,
+      this.exchangeFactory.createMdService(data.instrument.exchange.value),
       data.timeframe,
       data.instrument,
       data.strategyType,
       data.strategyParams
     );
     await backtest.start();
-    await this.backtestRepository.save(backtest);
+    await this.backtestRepository.update(backtest);
   }
 }

@@ -8,8 +8,7 @@ import Position from '../oms/position';
 type BacktestState = 'WAITING' | 'RUNNING' | 'EXECUTED' | 'FAILED';
 
 export default class Backtest extends Runner {
-  private state: BacktestState = 'WAITING';
-  private positions: Position[] = [];
+  private _state: BacktestState;
   constructor(
     readonly id: string,
     readonly startTime: Date,
@@ -18,17 +17,23 @@ export default class Backtest extends Runner {
     timeframe: Timeframe,
     instrument: Instrument,
     strategyType: string,
-    strategyParams: any
+    strategyParams: any,
+    state: BacktestState = 'WAITING'
   ) {
     super(timeframe, instrument, strategyType, strategyParams);
+    this._state = state;
   }
 
-  get State(): BacktestState {
-    return this.state;
+  get state(): BacktestState {
+    return this._state;
+  }
+
+  get positions(): Position[] {
+    return this.strategy.getPositions();
   }
   async start() {
     try {
-      this.state = 'RUNNING';
+      this._state = 'RUNNING';
       const history = await this.mdService.getCandlestick(
         this.instrument.symbol,
         this.timeframe,
@@ -45,10 +50,9 @@ export default class Backtest extends Runner {
 
       this.printPositions();
       this.printProfit();
-      this.positions = this.strategy.getPositions();
-      this.state = 'EXECUTED';
+      this._state = 'EXECUTED';
     } catch (error) {
-      this.state = 'FAILED';
+      this._state = 'FAILED';
       console.log(error);
     }
   }

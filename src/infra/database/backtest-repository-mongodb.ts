@@ -23,10 +23,28 @@ export default class BacktestRepositoryMongoDb implements BacktestRepository {
       timeframe: backtest.timeframe,
       instrument: backtest.instrument,
       strategyType: backtest.strategyType,
-      strategyParams: backtest.strategyParams
+      strategyParams: backtest.strategyParams,
+      state: backtest.state
     });
   }
 
+  async update(backtest: Backtest): Promise<void> {
+    await this.collection.updateOne(
+      { id: backtest.id },
+      {
+        $set: {
+          startTime: backtest.startTime,
+          endTime: backtest.endTime,
+          timeframe: backtest.timeframe,
+          instrument: backtest.instrument,
+          strategyType: backtest.strategyType,
+          strategyParams: backtest.strategyParams,
+          state: backtest.state,
+          positions: backtest.positions
+        }
+      }
+    );
+  }
   async getById(id: string): Promise<Backtest> {
     try {
       const backtest = await this.collection.findOne({ id: id });
@@ -52,7 +70,8 @@ export default class BacktestRepositoryMongoDb implements BacktestRepository {
         timeframe,
         instrument,
         backtest.strategyType,
-        backtest.strategyParams
+        backtest.strategyParams,
+        backtest.state
       );
     } catch (error) {
       throw new Error(`Error getting backtest from MongoDB: ${error}`);
