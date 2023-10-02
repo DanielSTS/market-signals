@@ -34,16 +34,10 @@ export default class CreateBacktest {
       input.strategyParams
     );
     await this.backtestRepository.save(backtest);
-    const backtestJobDto: BacktestJob = {
-      id,
-      startTime: backtest.startTime,
-      endTime: backtest.endTime,
-      timeframe: backtest.timeframe,
-      instrument: backtest.instrument,
-      strategyType: backtest.strategyType,
-      strategyParams: backtest.strategyParams
+    const backtestJob: BacktestJob = {
+      id
     };
-    await this.queue.add('ExecuteBacktest', backtestJobDto);
+    await this.queue.add('ExecuteBacktest', backtestJob);
     return id;
   }
 }

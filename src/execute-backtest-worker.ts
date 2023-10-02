@@ -1,6 +1,8 @@
 import EventEmitter from 'events';
-import { Worker } from 'bullmq';
-import ExecuteBacktest from './application/handler/execute-backtest';
+import { Job, Worker } from 'bullmq';
+import ExecuteBacktest, {
+  BacktestJob
+} from './application/handler/execute-backtest';
 import 'dotenv/config';
 import redisConfig from './infra/queue/redis-config';
 import MdServiceFactory from './application/exchange/exchange-factory';
@@ -19,14 +21,13 @@ async function main() {
     db,
     mdServiceFactory
   );
-  const executeBacktest = new ExecuteBacktest(
-    mdServiceFactory,
-    backtestRepository
-  );
+  const executeBacktest = new ExecuteBacktest(backtestRepository);
 
   new Worker(
     executeBacktest.key,
-    executeBacktest.handle.bind(executeBacktest),
+    async (job: Job<BacktestJob>) => {
+      await executeBacktest.handle(job.data);
+    },
     {
       connection: redisConfig
     }

@@ -61,7 +61,7 @@ export default class BacktestRepositoryMongoDb implements BacktestRepository {
       const mdService = this.mdServiceFactory.createMdService(
         backtest.instrument.exchange.value
       );
-      const timeframe = new Timeframe(backtest.timeframe);
+      const timeframe = new Timeframe(backtest.timeframe.value);
       return new Backtest(
         backtest.id,
         backtest.startTime,

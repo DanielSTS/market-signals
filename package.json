@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx src/main.ts",
-    "dev:consumer": "tsx src/consumer.ts",
+    "dev:consumer": "tsx src/execute-backtest-worker.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",

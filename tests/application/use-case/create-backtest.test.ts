@@ -6,6 +6,7 @@ import createBacktest from '../../../src/application/use-case/create-backtest';
 import QueueAdapter from '../../../src/infra/queue/queue-adapter';
 import { ExchangeFactory } from '../../../src/application/exchange/exchange-factory';
 import { MdService } from '../../../src/domain/market-data/md.service';
+
 function makeMdService(): MdService {
   return {
     subscribeOrderBook: jest.fn(),
@@ -69,18 +70,7 @@ describe('createBacktest', () => {
 
     expect(backtest).toBeDefined();
     expect(addToQueueSpy).toHaveBeenCalledWith('ExecuteBacktest', {
-      id,
-      instrument: {
-        exchange: { value: input.exchange },
-        minQuantity: 1,
-        priceIncrement: 0.01,
-        symbol: 'btcbrl'
-      },
-      timeframe: { value: input.timeframe },
-      startTime: input.startTime,
-      endTime: input.endTime,
-      strategyType: input.strategyType,
-      strategyParams: input.strategyParams
+      id
     });
   });
 });
