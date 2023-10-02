@@ -2,17 +2,17 @@ import BacktestRepository from '../../domain/repository/backtest-repository';
 import Exchange from '../../domain/core/exchange';
 import InstrumentRepository from '../../domain/repository/instrument-repository';
 import Timeframe from '../../domain/core/timeframe';
-import { MdService } from '../../domain/market-data/md.service';
 import Backtest from '../../domain/runner/backtest';
 import crypto from 'crypto';
 import { BacktestJob } from '../job/execute-backtest';
 import QueueAdapter from '../../infra/queue/queue-adapter';
+import { ExchangeFactory } from '../exchange/exchange-factory';
 
 export default class CreateBacktest {
   constructor(
     private readonly instrumentRepository: InstrumentRepository,
     private readonly backtestRepository: BacktestRepository,
-    private readonly mdService: MdService,
+    private readonly mdServiceFactory: ExchangeFactory,
     private readonly queue: QueueAdapter
   ) {}
   async execute(input: Input): Promise<string> {
@@ -27,7 +27,7 @@ export default class CreateBacktest {
       id,
       input.startTime,
       input.endTime,
-      this.mdService,
+      this.mdServiceFactory.createMdService(exchange.value),
       timeframe,
       instrument,
       input.strategyType,

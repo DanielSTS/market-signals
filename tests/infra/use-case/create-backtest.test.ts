@@ -1,11 +1,11 @@
 import BacktestRepository from '../../../src/domain/repository/backtest-repository';
 import InstrumentRepository from '../../../src/domain/repository/instrument-repository';
-import { MdService } from '../../../src/domain/market-data/md.service';
 import InMemoryBacktestRepository from '../../../src/infra/database/backtest-repository-in-memory';
 import InMemoryInstrumentRepository from '../../../src/infra/database/instrument-repository-in-memory';
 import createBacktest from '../../../src/application/use-case/create-backtest';
 import QueueAdapter from '../../../src/infra/queue/queue-adapter';
-
+import { ExchangeFactory } from '../../../src/application/exchange/exchange-factory';
+import { MdService } from '../../../src/domain/market-data/md.service';
 function makeMdService(): MdService {
   return {
     subscribeOrderBook: jest.fn(),
@@ -13,6 +13,12 @@ function makeMdService(): MdService {
     subscribeCandlestick: jest.fn(),
     unsubscribeCandlestick: jest.fn(),
     getCandlestick: jest.fn()
+  };
+}
+
+function makeMdServiceFactory(): ExchangeFactory {
+  return {
+    createMdService: (exchange: string) => makeMdService()
   };
 }
 
@@ -25,13 +31,13 @@ function makeQueueAdapter(): QueueAdapter {
 describe('createBacktest', () => {
   let instrumentRepository: InstrumentRepository;
   let backtestRepository: BacktestRepository;
-  let mdService: MdService;
+  let mdService: ExchangeFactory;
   let queue: QueueAdapter;
 
   beforeEach(() => {
     instrumentRepository = new InMemoryInstrumentRepository();
     backtestRepository = new InMemoryBacktestRepository();
-    mdService = makeMdService();
+    mdService = makeMdServiceFactory();
     queue = makeQueueAdapter();
   });
 
