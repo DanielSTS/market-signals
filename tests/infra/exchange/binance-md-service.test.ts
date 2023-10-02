@@ -1,8 +1,8 @@
 import EventEmitter from 'events';
-import BinanceMdService from '../../src/application/exchange/binance-md-service';
-import WebsocketAdapter from '../../src/infra/web/websocket-adapter';
-import RestAdapter from '../../src/infra/web/rest-adapter';
-import Timeframe from '../../src/domain/core/timeframe';
+import BinanceMdService from '../../../src/application/exchange/binance-md-service';
+import WebsocketAdapter from '../../../src/infra/web/websocket-adapter';
+import RestAdapter from '../../../src/infra/web/rest-adapter';
+import Timeframe from '../../../src/domain/core/timeframe';
 
 function makeWsAdapter(): WebsocketAdapter {
   return {

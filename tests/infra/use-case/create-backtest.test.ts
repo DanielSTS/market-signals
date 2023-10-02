@@ -1,10 +1,10 @@
-import BacktestRepository from '../../src/domain/repository/backtest-repository';
-import InstrumentRepository from '../../src/domain/repository/instrument-repository';
-import { MdService } from '../../src/domain/market-data/md.service';
-import InMemoryBacktestRepository from '../../src/infra/database/backtest-repository-in-memory';
-import InMemoryInstrumentRepository from '../../src/infra/database/instrument-repository-in-memory';
-import createBacktest from '../../src/application/use-case/create-backtest';
-import QueueAdapter from '../../src/infra/queue/queue-adapter';
+import BacktestRepository from '../../../src/domain/repository/backtest-repository';
+import InstrumentRepository from '../../../src/domain/repository/instrument-repository';
+import { MdService } from '../../../src/domain/market-data/md.service';
+import InMemoryBacktestRepository from '../../../src/infra/database/backtest-repository-in-memory';
+import InMemoryInstrumentRepository from '../../../src/infra/database/instrument-repository-in-memory';
+import createBacktest from '../../../src/application/use-case/create-backtest';
+import QueueAdapter from '../../../src/infra/queue/queue-adapter';
 
 function makeMdService(): MdService {
   return {

@@ -1,9 +1,9 @@
 import EventEmitter from 'events';
-import WebsocketAdapter from '../../src/infra/web/websocket-adapter';
-import RestAdapter from '../../src/infra/web/rest-adapter';
-import Timeframe from '../../src/domain/core/timeframe';
-import Exchange from '../../src/domain/core/exchange';
-import FoxbitMdService from '../../src/application/exchange/foxbit-md-service';
+import WebsocketAdapter from '../../../src/infra/web/websocket-adapter';
+import RestAdapter from '../../../src/infra/web/rest-adapter';
+import Timeframe from '../../../src/domain/core/timeframe';
+import Exchange from '../../../src/domain/core/exchange';
+import FoxbitMdService from '../../../src/application/exchange/foxbit-md-service';
 
 function makeWsAdapter(): WebsocketAdapter {
   return {
