@@ -23,7 +23,7 @@ async function main() {
   );
   const calculateStats = new CalculateStats(backtestRepository);
 
-  new Worker(
+  const worker = new Worker(
     calculateStats.key,
     async (job: Job<CalculateStatsJob>) => {
       await calculateStats.handle(job.data);
@@ -32,6 +32,10 @@ async function main() {
       connection: redisConfig
     }
   );
+
+  worker.on('failed', (job, error: Error) => {
+    console.log(job, error);
+  });
 }
 
 main();

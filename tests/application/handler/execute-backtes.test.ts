@@ -1,5 +1,6 @@
 import ExecuteBacktest from '../../../src/application/handler/execute-backtest';
 import BacktestRepository from '../../../src/domain/repository/backtest-repository';
+import QueueAdapter from '../../../src/infra/queue/queue-adapter';
 
 describe('ExecuteBacktest', () => {
   it('should execute a backtest', async () => {
@@ -23,18 +24,28 @@ describe('ExecuteBacktest', () => {
       start: jest.fn()
     };
 
-    const backtestRepositoryMock: BacktestRepository = {
+    const backtestRepository: BacktestRepository = {
       save: jest.fn(),
       update: jest.fn(),
       getById: jest.fn().mockResolvedValue(backtest)
     };
 
-    const executeBacktestHandler = new ExecuteBacktest(backtestRepositoryMock);
+    const queue: QueueAdapter = {
+      add: jest.fn()
+    };
+
+    const executeBacktestHandler = new ExecuteBacktest(
+      backtestRepository,
+      queue
+    );
 
     await executeBacktestHandler.handle({ id: 'backtest-id' });
 
-    expect(backtestRepositoryMock.getById).toHaveBeenCalledWith('backtest-id');
+    expect(backtestRepository.getById).toHaveBeenCalledWith('backtest-id');
     expect(backtest.start).toHaveBeenCalled();
-    expect(backtestRepositoryMock.update).toHaveBeenCalledWith(backtest);
+    expect(backtestRepository.update).toHaveBeenCalledWith(backtest);
+    expect(queue.add).toHaveBeenCalledWith('CalculateStats', {
+      id: 'backtest-id'
+    });
   });
 });

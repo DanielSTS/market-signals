@@ -31,4 +31,5 @@ export type BacktestDto = {
 
 export default interface BacktestDao {
   getDtoById(id: string): Promise<BacktestDto>;
+  getAllDto(): Promise<BacktestDto[]>;
 }

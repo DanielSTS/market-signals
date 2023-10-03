@@ -45,11 +45,10 @@ describe('FoxbitMdService', () => {
 
   it('should subscribe to a symbol', () => {
     const symbol = 'btcbrl';
-    const subscribeSpy = jest.spyOn(wsAdapter, 'send');
 
     foxbitMdService.subscribeOrderBook(symbol);
 
-    expect(subscribeSpy).toHaveBeenCalledWith(
+    expect(wsAdapter.send).toHaveBeenCalledWith(
       JSON.stringify({
         m: 2,
         i: 1,
@@ -63,12 +62,11 @@ describe('FoxbitMdService', () => {
 
   it('should unsubscribe from a symbol', () => {
     const symbol = 'ethbrl';
-    const unsubscribeSpy = jest.spyOn(wsAdapter, 'send');
     foxbitMdService.subscribeOrderBook(symbol);
 
     foxbitMdService.unsubscribeOrderBook(symbol);
 
-    expect(unsubscribeSpy).toHaveBeenNthCalledWith(
+    expect(wsAdapter.send).toHaveBeenNthCalledWith(
       2,
       JSON.stringify({
         m: 2,
@@ -82,17 +80,15 @@ describe('FoxbitMdService', () => {
   });
 
   it('should send subscribe when processOpen', () => {
-    const subscribeSpy = jest.spyOn(wsAdapter, 'send');
-
     foxbitMdService.subscribeOrderBook('btcbrl');
     foxbitMdService.subscribeOrderBook('ethbrl');
     foxbitMdService.subscribeOrderBook('xrpbrl');
 
-    expect(subscribeSpy).toHaveBeenCalledTimes(3);
+    expect(wsAdapter.send).toHaveBeenCalledTimes(3);
 
     foxbitMdService['processOpen']();
 
-    expect(subscribeSpy).toHaveBeenCalledTimes(6);
+    expect(wsAdapter.send).toHaveBeenCalledTimes(6);
   });
 
   it('should process level 1 update event', () => {
@@ -107,11 +103,9 @@ describe('FoxbitMdService', () => {
       })
     };
 
-    const emitOrderBookSpy = jest.spyOn(eventEmitter, 'emit');
-
     foxbitMdService['processMessage'](JSON.stringify(message));
 
-    expect(emitOrderBookSpy).toHaveBeenCalledWith(
+    expect(eventEmitter.emit).toHaveBeenCalledWith(
       'onOrderBook.foxbit.btcbrl',
       expect.objectContaining({
         symbol: 'btcbrl',

@@ -56,8 +56,6 @@ describe('createBacktest', () => {
       }
     };
 
-    const addToQueueSpy = jest.spyOn(queue, 'add');
-
     const useCase = new createBacktest(
       instrumentRepository,
       backtestRepository,
@@ -69,7 +67,7 @@ describe('createBacktest', () => {
     const backtest = await backtestRepository.getById(id);
 
     expect(backtest).toBeDefined();
-    expect(addToQueueSpy).toHaveBeenCalledWith('ExecuteBacktest', {
+    expect(queue.add).toHaveBeenCalledWith('ExecuteBacktest', {
       id
     });
   });

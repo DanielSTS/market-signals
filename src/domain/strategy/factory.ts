@@ -1,6 +1,5 @@
 import Arbitrage from './arbitrage';
 import BollingerBands from './bollinger-bands';
-import Simple from './simple';
 import { StrategyCallbacks } from './strategy';
 
 export default function FactoryStrategyCreate(
@@ -14,6 +13,6 @@ export default function FactoryStrategyCreate(
     case 'bollinger-bands':
       return new BollingerBands(20, 2, callbacks);
     default:
-      return new Simple(callbacks);
+      throw new Error('Strategy not found');
   }
 }

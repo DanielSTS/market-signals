@@ -5,7 +5,10 @@ import Timeframe from '../../domain/core/timeframe';
 import Instrument from '../../domain/core/instrument';
 import Exchange from '../../domain/core/exchange';
 import MdServiceFactory from '../../application/exchange/exchange-factory';
-import BacktestDao, { BacktestDto } from '../../application/dao/backtest-dao';
+import BacktestDao, {
+  BacktestDto,
+  PositionDto
+} from '../../application/dao/backtest-dao';
 
 export default class BacktestRepositoryMongoDb
   implements BacktestRepository, BacktestDao
@@ -27,7 +30,8 @@ export default class BacktestRepositoryMongoDb
       instrument: backtest.instrument,
       strategyType: backtest.strategyType,
       strategyParams: backtest.strategyParams,
-      state: backtest.state
+      state: backtest.state,
+      positions: backtest.positions
     });
   }
 
@@ -87,35 +91,52 @@ export default class BacktestRepositoryMongoDb
       if (!backtest) {
         throw new Error('Backtest not found');
       }
-      return {
-        id: backtest.id,
-        startTime: backtest.startTime,
-        endTime: backtest.endTime,
-        symbol: backtest.symbol,
-        exchange: backtest.exchange,
-        timeframe: backtest.timeframe,
-        strategyType: backtest.strategyType,
-        strategyParams: backtest.strategyParams,
-        state: backtest.startTime,
-        positions: backtest.positions.map((p: any) => {
-          return {
-            state: p._state,
-            enterTrade: {
-              price: p.enterTrade.price,
-              time: p.enterTrade.time,
-              quantity: p.enterTrade.quantity
-            },
-            id: p.id,
-            exitTrade: {
-              price: p.exitTrade.price,
-              time: p.exitTrade.time,
-              quantity: p.exitTrade.quantity
-            }
-          };
-        })
-      };
+      return BacktestRepositoryMongoDb.mapBacktestDto(backtest);
     } catch (error) {
       throw new Error(`Error getting backtest from MongoDB: ${error}`);
     }
+  }
+
+  async getAllDto(): Promise<BacktestDto[]> {
+    try {
+      const backtest = await this.collection.find().toArray();
+      return backtest.map(BacktestRepositoryMongoDb.mapBacktestDto);
+    } catch (error) {
+      throw new Error(`Error getting backtests from MongoDB: ${error}`);
+    }
+  }
+
+  static mapBacktestDto(backtest: any): BacktestDto {
+    return {
+      id: backtest.id,
+      startTime: backtest.startTime,
+      endTime: backtest.endTime,
+      symbol: backtest.symbol,
+      exchange: backtest.exchange,
+      timeframe: backtest.timeframe,
+      strategyType: backtest.strategyType,
+      strategyParams: backtest.strategyParams,
+      state: backtest.startTime,
+      positions: backtest.positions.map(
+        BacktestRepositoryMongoDb.mapPositionDto
+      )
+    };
+  }
+
+  static mapPositionDto(position: any): PositionDto {
+    return {
+      state: position._state,
+      enterTrade: {
+        price: position.enterTrade.price,
+        time: position.enterTrade.time,
+        quantity: position.enterTrade.quantity
+      },
+      id: position.id,
+      exitTrade: {
+        price: position.exitTrade.price,
+        time: position.exitTrade.time,
+        quantity: position.exitTrade.quantity
+      }
+    };
   }
 }

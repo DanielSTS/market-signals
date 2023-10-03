@@ -3,6 +3,7 @@ import BinanceMdService from '../../../src/application/exchange/binance-md-servi
 import WebsocketAdapter from '../../../src/infra/web/websocket-adapter';
 import RestAdapter from '../../../src/infra/web/rest-adapter';
 import Timeframe from '../../../src/domain/core/timeframe';
+import Exchange from '../../../src/domain/core/exchange';
 
 function makeWsAdapter(): WebsocketAdapter {
   return {
@@ -28,7 +29,7 @@ describe('BinanceMdService', () => {
   let wsAdapter: WebsocketAdapter;
   let restAdapter: RestAdapter;
   let binanceMdService: BinanceMdService;
-  const exchange = { value: 'binance' };
+  const exchange = new Exchange('binance');
 
   beforeEach(() => {
     eventEmitter = new EventEmitter();
@@ -47,11 +48,10 @@ describe('BinanceMdService', () => {
 
   it('should subscribe to a symbol', () => {
     const symbol = 'btcusdt';
-    const subscribeSpy = jest.spyOn(wsAdapter, 'send');
 
     binanceMdService.subscribeOrderBook(symbol);
 
-    expect(subscribeSpy).toHaveBeenCalledWith(
+    expect(wsAdapter.send).toHaveBeenCalledWith(
       JSON.stringify({
         method: 'SUBSCRIBE',
         params: [`${symbol.toLowerCase()}@bookTicker`],
@@ -62,11 +62,10 @@ describe('BinanceMdService', () => {
 
   it('should unsubscribe from a symbol', () => {
     const symbol = 'ethusdt';
-    const unsubscribeSpy = jest.spyOn(wsAdapter, 'send');
     binanceMdService.subscribeOrderBook(symbol);
     binanceMdService.unsubscribeOrderBook(symbol);
 
-    expect(unsubscribeSpy).toHaveBeenNthCalledWith(
+    expect(wsAdapter.send).toHaveBeenNthCalledWith(
       2,
       JSON.stringify({
         method: 'UNSUBSCRIBE',
@@ -77,17 +76,15 @@ describe('BinanceMdService', () => {
   });
 
   it('should send subscribe when processOpen', () => {
-    const subscribeSpy = jest.spyOn(wsAdapter, 'send');
-
     binanceMdService.subscribeOrderBook('btcbrl');
     binanceMdService.subscribeOrderBook('ethbrl');
     binanceMdService.subscribeOrderBook('xrpbrl');
 
-    expect(subscribeSpy).toHaveBeenCalledTimes(3);
+    expect(wsAdapter.send).toHaveBeenCalledTimes(3);
 
     binanceMdService['processOpen']();
 
-    expect(subscribeSpy).toHaveBeenCalledTimes(6);
+    expect(wsAdapter.send).toHaveBeenCalledTimes(6);
   });
 
   it('should process depth update event', () => {
@@ -100,11 +97,9 @@ describe('BinanceMdService', () => {
       A: '40.66000000'
     };
 
-    const emitOrderBookSpy = jest.spyOn(eventEmitter, 'emit');
-
     binanceMdService['processMessage'](JSON.stringify(payload));
 
-    expect(emitOrderBookSpy).toHaveBeenCalledWith(
+    expect(eventEmitter.emit).toHaveBeenCalledWith(
       'onOrderBook.binance.btcusdt',
       expect.objectContaining({
         symbol: 'btcusdt',

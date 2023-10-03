@@ -12,6 +12,7 @@ async function main() {
   const eventEmitter = new EventEmitter();
   const instrumentRepository = new InMemoryInstrumentRepository();
   const mdServiceFactory = new MdServiceFactory(eventEmitter);
+
   const client = new MongoClient(mongodbConfig.MONGO_URI);
   await client.connect();
   const db = client.db();
@@ -32,7 +33,7 @@ async function main() {
     timeframe: '1h',
     startTime: new Date('2022-07-18T00:00'),
     endTime: new Date('2022-08-19T12:00'),
-    strategyType: 'bb',
+    strategyType: 'bollinger-bands',
     strategyParams: {}
   });
   console.log('Backtest created and job added successfully!');
