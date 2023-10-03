@@ -9,7 +9,7 @@ export type PositionDto = {
     quantity: number;
   };
   id: string;
-  exitTrade: {
+  exitTrade?: {
     price: number;
     time: Date;
     quantity: number;

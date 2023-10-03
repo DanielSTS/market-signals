@@ -31,6 +31,7 @@ export default class Backtest extends Runner {
   get positions(): Position[] {
     return this.strategy.getPositions();
   }
+
   async start() {
     try {
       this._state = 'RUNNING';

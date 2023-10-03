@@ -111,12 +111,12 @@ export default class BacktestRepositoryMongoDb
       id: backtest.id,
       startTime: backtest.startTime,
       endTime: backtest.endTime,
-      symbol: backtest.symbol,
-      exchange: backtest.exchange,
-      timeframe: backtest.timeframe,
+      symbol: backtest.instrument.symbol,
+      exchange: backtest.instrument.value,
+      timeframe: backtest.timeframe.value,
       strategyType: backtest.strategyType,
       strategyParams: backtest.strategyParams,
-      state: backtest.startTime,
+      state: backtest.state,
       positions: backtest.positions.map(
         BacktestRepositoryMongoDb.mapPositionDto
       )
@@ -132,7 +132,7 @@ export default class BacktestRepositoryMongoDb
         quantity: position.enterTrade.quantity
       },
       id: position.id,
-      exitTrade: {
+      exitTrade: position.exitTrade && {
         price: position.exitTrade.price,
         time: position.exitTrade.time,
         quantity: position.exitTrade.quantity

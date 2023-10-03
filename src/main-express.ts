@@ -5,7 +5,7 @@ import Router from './infra/web/router';
 async function main() {
   const expressAdapter = new ExpressAdapter();
   new Router(expressAdapter);
-  expressAdapter.listen(3000);
+  expressAdapter.listen(Number(process.env.EXPRESS_PORT) || 3000);
 }
 
 main();

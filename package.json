@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx src/main-express.ts",
+    "dev:main": "tsx src/main.ts",
     "dev:backtest": "tsx src/execute-backtest-worker.ts",
     "dev:stats": "tsx src/calculate-stats-worker.ts",
     "test": "jest",
