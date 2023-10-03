@@ -9,7 +9,6 @@ import MdServiceFactory from './application/exchange/exchange-factory';
 import BacktestRepositoryMongoDb from './infra/database/backtest-repository-mongodb';
 import { MongoClient } from 'mongodb';
 import mongodbConfig from './infra/database/mongodb-config';
-import { BullMQAdapter } from './infra/queue/bullmq-adapter';
 
 async function main() {
   const eventEmitter = new EventEmitter();
@@ -22,9 +21,7 @@ async function main() {
     db,
     mdServiceFactory
   );
-
-  const bullQueue = new BullMQAdapter('CalculateStats');
-  const executeBacktest = new ExecuteBacktest(backtestRepository, bullQueue);
+  const executeBacktest = new ExecuteBacktest(backtestRepository);
 
   new Worker(
     executeBacktest.key,

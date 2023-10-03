@@ -28,10 +28,6 @@ export default class Backtest extends Runner {
     return this._state;
   }
 
-  get positions(): Position[] {
-    return this.strategy.getPositions();
-  }
-
   async start() {
     try {
       this._state = 'RUNNING';
@@ -49,8 +45,7 @@ export default class Backtest extends Runner {
         })
       );
 
-      this.printPositions();
-      this.printProfit();
+      this.calculateStats();
       this._state = 'EXECUTED';
     } catch (error) {
       this._state = 'FAILED';

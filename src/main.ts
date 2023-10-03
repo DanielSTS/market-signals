@@ -32,7 +32,7 @@ async function main() {
     symbol: 'btcbrl',
     timeframe: '1h',
     startTime: new Date('2022-07-18T00:00'),
-    endTime: new Date('2022-08-19T12:00'),
+    endTime: new Date('2023-08-19T12:00'),
     strategyType: 'bollinger-bands',
     strategyParams: {}
   });

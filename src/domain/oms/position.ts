@@ -7,6 +7,7 @@ export default class Position {
   readonly enterTrade: Trade;
   exitTrade?: Trade;
   readonly id: string;
+  private _profit: number = 0;
   constructor(enterTrade: Trade, id: string) {
     this.enterTrade = enterTrade;
     this.id = id;
@@ -15,37 +16,17 @@ export default class Position {
   get state(): PositionState {
     return this._state;
   }
+
+  get profit(): number {
+    return this._profit;
+  }
+
   close(exitTrade: Trade) {
     this._state = 'CLOSED';
     this.exitTrade = exitTrade;
-  }
-
-  print() {
-    const enter = `Enter | ${this.enterTrade.price} | ${this.enterTrade.time}`;
-    const exit = this.exitTrade
-      ? `Exit: | ${this.exitTrade.price} | ${this.exitTrade.time}`
-      : '';
-
-    let profit = '';
-    if (this._state === 'CLOSED') {
-      profit = `Profit: ${this.profitString()}`;
-    }
-
-    console.log(`${enter} - ${exit} - ${profit}`);
-  }
-
-  profit() {
     const fee = 0.0025;
     const entrance = this.enterTrade.price * (1 + fee);
-    if (this.exitTrade) {
-      const exit = this.exitTrade.price * (1 - fee);
-      return exit - entrance;
-    } else {
-      return 0;
-    }
-  }
-
-  profitString() {
-    return this.profit().toFixed(2);
+    const exit = this.exitTrade.price * (1 - fee);
+    this._profit = exit - entrance;
   }
 }

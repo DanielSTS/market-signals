@@ -31,7 +31,6 @@ export default abstract class MdServiceBase implements MdService {
   ) {}
 
   protected processOpen(): void {
-    console.log('Connection Open: Sending subscriptions...');
     this.subscriptionManagerOrderBook
       .getUniqueSubscriptions()
       .forEach(symbol => {

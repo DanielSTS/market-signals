@@ -31,7 +31,8 @@ export default class BacktestRepositoryMongoDb
       strategyType: backtest.strategyType,
       strategyParams: backtest.strategyParams,
       state: backtest.state,
-      positions: backtest.positions
+      positions: backtest.positions,
+      stats: backtest.stats
     });
   }
 
@@ -47,7 +48,8 @@ export default class BacktestRepositoryMongoDb
           strategyType: backtest.strategyType,
           strategyParams: backtest.strategyParams,
           state: backtest.state,
-          positions: backtest.positions
+          positions: backtest.positions,
+          stats: backtest.stats
         }
       }
     );
@@ -112,7 +114,7 @@ export default class BacktestRepositoryMongoDb
       startTime: backtest.startTime,
       endTime: backtest.endTime,
       symbol: backtest.instrument.symbol,
-      exchange: backtest.instrument.value,
+      exchange: backtest.instrument.exchange.value,
       timeframe: backtest.timeframe.value,
       strategyType: backtest.strategyType,
       strategyParams: backtest.strategyParams,
