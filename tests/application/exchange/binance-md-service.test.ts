@@ -97,9 +97,11 @@ describe('BinanceMdService', () => {
       A: '40.66000000'
     };
 
+    const emitOrderBookSpy = jest.spyOn(eventEmitter, 'emit');
+
     binanceMdService['processMessage'](JSON.stringify(payload));
 
-    expect(eventEmitter.emit).toHaveBeenCalledWith(
+    expect(emitOrderBookSpy).toHaveBeenCalledWith(
       'onOrderBook.binance.btcusdt',
       expect.objectContaining({
         symbol: 'btcusdt',

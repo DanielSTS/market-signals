@@ -103,9 +103,11 @@ describe('FoxbitMdService', () => {
       })
     };
 
+    const emitOrderBookSpy = jest.spyOn(eventEmitter, 'emit');
+
     foxbitMdService['processMessage'](JSON.stringify(message));
 
-    expect(eventEmitter.emit).toHaveBeenCalledWith(
+    expect(emitOrderBookSpy).toHaveBeenCalledWith(
       'onOrderBook.foxbit.btcbrl',
       expect.objectContaining({
         symbol: 'btcbrl',
