@@ -8,6 +8,7 @@ import mongodbConfig from './infra/database/mongodb-config';
 import { BullMQAdapter } from './infra/queue/bullmq-adapter';
 import GetBacktests from './application/use-case/get-backtests';
 import GetBacktestById from './application/use-case/get-backtests-by-id';
+import BacktestDaoMongoDb from './infra/database/backtest-dao-mongodb';
 
 export default class UseCaseFactory {
   static async CreateBacktest() {
@@ -32,30 +33,18 @@ export default class UseCaseFactory {
   }
 
   static async GetBacktests() {
-    const eventEmitter = new EventEmitter();
-    const mdServiceFactory = new MdServiceFactory(eventEmitter);
-
     const client = new MongoClient(mongodbConfig.MONGO_URI);
     await client.connect();
     const db = client.db();
-    const backtestRepository = new BacktestRepositoryMongoDb(
-      db,
-      mdServiceFactory
-    );
-    return new GetBacktests(backtestRepository);
+    const backtestDao = new BacktestDaoMongoDb(db);
+    return new GetBacktests(backtestDao);
   }
 
   static async GetBacktestById() {
-    const eventEmitter = new EventEmitter();
-    const mdServiceFactory = new MdServiceFactory(eventEmitter);
-
     const client = new MongoClient(mongodbConfig.MONGO_URI);
     await client.connect();
     const db = client.db();
-    const backtestRepository = new BacktestRepositoryMongoDb(
-      db,
-      mdServiceFactory
-    );
-    return new GetBacktestById(backtestRepository);
+    const backtestDao = new BacktestDaoMongoDb(db);
+    return new GetBacktestById(backtestDao);
   }
 }

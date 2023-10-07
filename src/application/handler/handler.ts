@@ -1,4 +1,4 @@
-export type JobName = 'ExecuteBacktest' | 'CalculateStats';
+export type JobName = 'ExecuteBacktest';
 
 export default interface Handler {
   readonly key: JobName;
