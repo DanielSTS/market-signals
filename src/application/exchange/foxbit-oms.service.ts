@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import OmsService from '../../domain/oms/oms.service';
 import Order from '../../domain/oms/order';
-import RestAdapter from '../../infra/rest-adapter';
+import RestAdapter from '../../infra/web/rest-adapter';
 
 type OrderResponse = {
   id: string;
@@ -23,6 +23,8 @@ export default class FoxbitOmsService extends OmsService {
       quantity: order.quantity.toString()
     };
     const ret = await this.rest.post<OrderResponse>('order', data);
-    return { ...order, status: 'OPEN', exchangeOrderId: ret.id };
+    order.updateStatus('OPEN');
+    order.setExchangeOrderId(ret.id);
+    return order;
   }
 }

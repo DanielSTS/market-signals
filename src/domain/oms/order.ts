@@ -4,8 +4,8 @@ export type OrderSide = 'BUY' | 'SELL';
 export type OrderStatus = 'NEW' | 'OPEN' | 'FILLED';
 
 export default class Order {
-  private status: OrderStatus = 'NEW';
-  readonly exchangeOrderId?: string;
+  private _status: OrderStatus = 'NEW';
+  private _exchangeOrderId?: string;
   constructor(
     readonly exchange: Exchange,
     readonly symbol: string,
@@ -15,10 +15,16 @@ export default class Order {
   ) {
     if (this.quantity <= 0) throw new Error('Invalid quantity');
   }
-  getStatus(): OrderStatus {
-    return this.status;
+  status(): OrderStatus {
+    return this._status;
   }
   updateStatus(status: OrderStatus): void {
-    this.status = status;
+    this._status = status;
+  }
+
+  setExchangeOrderId(exchangeOrderId: string): void {
+    if (this._exchangeOrderId)
+      throw new Error('Order already has an exchange order id');
+    this._exchangeOrderId = exchangeOrderId;
   }
 }
