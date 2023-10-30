@@ -13,7 +13,7 @@ export default class Router {
       return getBacktests.execute();
     });
 
-    http.on('get', '/backtests', async function (params: any, body: any) {
+    http.on('get', '/backtests/:id', async function (params: any, body: any) {
       const getBacktests = await UseCaseFactory.GetBacktestById();
       return getBacktests.execute(params);
     });
