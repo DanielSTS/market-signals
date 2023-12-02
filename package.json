@@ -10,8 +10,8 @@
     "dev:stats": "tsx src/calculate-stats-worker.ts",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "eslint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix"
+    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\" && prettier --write \"tests/**/*.{js,jsx,ts,tsx}\"",
+    "eslint": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\" && eslint --fix \"tests/**/*.{js,jsx,ts,tsx}\""
   },
   "keywords": [],
   "author": "",
