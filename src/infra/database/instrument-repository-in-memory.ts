@@ -16,6 +16,18 @@ export default class InMemoryInstrumentRepository
       symbol: 'btcbrl',
       minQuantity: 1,
       priceIncrement: 0.01
+    },
+    {
+      exchange: { value: 'foxbit' },
+      symbol: 'ethbrl',
+      minQuantity: 1,
+      priceIncrement: 0.01
+    },
+    {
+      exchange: { value: 'binance' },
+      symbol: 'ethbrl',
+      minQuantity: 1,
+      priceIncrement: 0.01
     }
   ];
 

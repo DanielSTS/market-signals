@@ -1,12 +1,14 @@
 import express from 'express';
 import HttpServer from './http-server';
+import cors from 'cors';
 
 export default class ExpressAdapter implements HttpServer {
-  private app: any;
+  private readonly app: any;
 
   constructor() {
     this.app = express();
     this.app.use(express.json());
+    this.app.use(cors());
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-types

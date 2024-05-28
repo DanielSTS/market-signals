@@ -11,6 +11,7 @@ export interface ExchangeFactory {
 
 export default class MdServiceFactory implements ExchangeFactory {
   constructor(private readonly eventEmitter: EventEmitter) {}
+
   createMdService(exchange: string): MdService {
     switch (exchange) {
       case 'foxbit': {
@@ -22,11 +23,9 @@ export default class MdServiceFactory implements ExchangeFactory {
       }
 
       case 'binance': {
-        const wsFoxbit = new WsAdapter('wss://api.foxbit.com.br/');
-        const restFoxbit = new AxiosAdapter(
-          'https://api.foxbit.com.br/rest/v3/'
-        );
-        return new BinanceMdService(this.eventEmitter, wsFoxbit, restFoxbit);
+        const wsBinance = new WsAdapter('wss://api.binance.com/');
+        const restBinance = new AxiosAdapter('https://api.binance.com/');
+        return new BinanceMdService(this.eventEmitter, wsBinance, restBinance);
       }
 
       default:

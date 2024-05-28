@@ -24,7 +24,7 @@ export type BacktestDto = {
   exchange: string;
   timeframe: string;
   strategyType: string;
-  strategyParams: any;
+  strategyParams: Record<string, any>;
   state: BacktestState;
   positions: PositionDto[];
 };
